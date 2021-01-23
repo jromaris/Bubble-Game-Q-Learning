@@ -4,9 +4,7 @@ import time
 pg.font.init()
 
 
-
-
-class Game():
+class Game:
 	def __init__(self):
 		self.over = False
 		self.score = 0
@@ -15,16 +13,14 @@ class Game():
 		self.font = pg.font.Font("fonts/pixel.otf", 30)
 
 		self.score_label = self.font.render('Score:{}'.format(self.score), False, BLACK)
-		self.score_label_x, self.score_label_y, _, _ = self.score_label.get_rect(center = DISP_CENTER)
-
+		self.score_label_x, self.score_label_y, _, _ = self.score_label.get_rect(center=DISP_CENTER)
 
 		self.end_msg = self.font.render('You Fucked Up!', False, BLACK)
-		self.end_msg_x, self.end_msg_y, _, _ = self.end_msg.get_rect(center = DISP_CENTER)
+		self.end_msg_x, self.end_msg_y, _, _ = self.end_msg.get_rect(center=DISP_CENTER)
 
 		self.restart_msg = self.font.render('Press R to restart', False, BLACK)
-		self.restart_msg_x, self.restart_msg_y, _, _ = self.restart_msg.get_rect(center = DISP_CENTER)
+		self.restart_msg_x, self.restart_msg_y, _, _ = self.restart_msg.get_rect(center=DISP_CENTER)
 		# Surface((width, height), flags=0, depth=0, masks=None) -> Surface
-
 
 	def gameOverScreen(self, grid_manager, background):
 
@@ -53,7 +49,6 @@ class Game():
 			pg.display.update()
 			clock.tick(60)
 
-
 		return
 
 	def drawScore(self):
@@ -65,8 +60,8 @@ class Game():
 	def drawGameOver(self):
 
 		display.blit(self.end_msg, (self.end_msg_x, DISP_H/2 - 60))
-		display.blit(self.restart_msg,(self.restart_msg_x, DISP_H/2 - 30))
-		display.blit(self.score_label,(self.score_label_x, DISP_H/2 - 0))
+		display.blit(self.restart_msg, (self.restart_msg_x, DISP_H/2 - 30))
+		display.blit(self.score_label, (self.score_label_x, DISP_H/2 - 0))
 
 	def updateScore(self):
 		if self.prev_score == self.score: return
@@ -76,9 +71,7 @@ class Game():
 		self.score_label_x, self.score_label_y, _, _ = self.score_label.get_rect(center = DISP_CENTER)
 
 
-
-
-class Background():
+class Background:
 	def __init__(self):
 		self.image = self.getImage()
 
@@ -88,7 +81,6 @@ class Background():
 		self.floor = pg.Surface((ROOM_WIDTH,FLOOR_HEIGHT), pg.SRCALPHA, 32)
 		self.floor.fill((200,0,0,90))
 
-
 	def getImage(self):
 		# Load and draw background image
 		bg = pg.image.load('images/bg.png').convert()
@@ -96,7 +88,6 @@ class Background():
 		sf = 0.8
 		bg = pg.transform.scale(bg, (int(bg_w * sf), int(bg_h * sf)))
 		return bg
-
 
 	def draw(self):
 		display.blit(self.image, (0,0))
@@ -110,7 +101,7 @@ class Background():
 		display.blit(self.wall, (WALL_BOUND_R, 0))
 
 
-class StateMachine():
+class StateMachine:
 
 	def __init__(self):
 
@@ -120,8 +111,10 @@ class StateMachine():
 
 	def set(self, state):
 
-		if state not in self.states: raise ValueError('{} not a valid state'.format(state))
-		else: self.state = state
+		if state not in self.states:
+			raise ValueError('{} not a valid state'.format(state))
+		else:
+			self.state = state
 
 		# print('State set to', self.state)
 
@@ -129,8 +122,7 @@ class StateMachine():
 		return self.state
 
 
-
-class CheatManager():
+class CheatManager:
 
 
 	def __init__(self, grid_manager, gun):
@@ -203,7 +195,6 @@ class CheatManager():
 	def yellow(self): self.gun.loaded.color = YELLOW
 	def green(self): self.gun.loaded.color = GREEN
 	def violet(self): self.gun.loaded.color = VIOLET
-
 
 	def god_cheat(self):
 		print('Activated God Mode')

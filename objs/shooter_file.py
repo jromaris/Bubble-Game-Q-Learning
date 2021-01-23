@@ -5,7 +5,7 @@ from math import sin, cos, radians, degrees, atan2
 import pygame as pg
 
 
-class Shooter():
+class Shooter:
 
 	def __init__(self, image = 'images/gun.png', pos = display_rect.center):
 
@@ -30,8 +30,6 @@ class Shooter():
 		self.reload2 = Bubble(self.reload2_pos)
 		self.reload3 = Bubble(self.reload3_pos)
 
-
-
 	def initGunImage(self, image):
 		# Load image
 		self.shooter = pg.image.load(image).convert_alpha()
@@ -50,8 +48,8 @@ class Shooter():
 		self.shooter_w = self.shooter_rect[2]
 		self.shooter_h = self.shooter_rect[3]
 
-
-	# I could have put this in the initialization but I wanted to emphasize the fact that the image we are actually rotating is in a box
+	# I could have put this in the initialization but I wanted to emphasize
+	# the fact that the image we are actually rotating is in a box
 	def putInBox(self):
 
 		# Make a box to put shooter in
@@ -65,13 +63,13 @@ class Shooter():
 		# Since we want 90 to be when the shooter is pointing straight up, we rotate it
 		self.shooter_box = pg.transform.rotate(self.shooter_box, -90)
 
-
 	def initCrossHair(self):
 
-		#invis cursor
-		pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+		# invis cursor
+		pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0),
+								(0, 0, 0, 0, 0, 0, 0, 0))
 
-		#Load and draw crosshair
+		# Load and draw crosshair
 		crosshair = pygame.image.load('images/crosshair.png')
 		sf = 00.20
 		self.crosshair = pg.transform.scale(crosshair, (int(crosshair.get_width() * sf), int(crosshair.get_height() * sf)))
@@ -104,9 +102,6 @@ class Shooter():
 		# display the image
 		display.blit(rotated_box, rotated_box.get_rect( center = self.pos))
 
-		
-
-
 	def draw_bullets(self):
 
 		self.fired.update()
@@ -114,7 +109,6 @@ class Shooter():
 		self.reload1.draw()
 		self.reload2.draw()
 		self.reload3.draw()
-		
 
 	def fire(self):
 

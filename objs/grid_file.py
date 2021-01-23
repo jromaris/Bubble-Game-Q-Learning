@@ -7,7 +7,7 @@ import numpy as np
 
 
 
-class GridManager():
+class GridManager:
 
 	def __init__(self):
 		self.curr_hit = False
@@ -399,9 +399,9 @@ class GridManager():
 
 				else: self.grid[row][col].draw()
 
-#ESTO ES DE DEBUG
+# ESTO ES DE DEBUG
 				# apply it to text on a label
-				label = self.myfont.render(str(row)+str(col), 1, (0,0,0))
+				label = self.myfont.render(str(row)+str(col), True, (0, 0, 0))
 				# put the label object on the screen at point x=100, y=100
 				display.blit(label, self.grid[row][col].pos)
 		
@@ -458,19 +458,19 @@ class GridManager():
 					del self.paths[0][0]
 					if not self.paths[0]: del self.paths[0]
 
-	def learnGrid(self,currBall,nextBall):
-		#self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+	def learnGrid(self, currBall,nextBall):
+		# self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
 		self.grid_state = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1,4))
 		for row in range(self.rows):
-			#print("Row", row)
+			# print("Row", row)
 			for col in range(self.cols):
-				#print("Col", col)
+				# print("Col", col)
 				currX = self.grid[row][col].pos[0]
-				#print("CurrX", currX)
+				# print("CurrX", currX)
 				currColor = self.grid[row][col].color
 				if currBall == currColor:
 					self.grid_state[row][int((((currX-150)/(16.125)))+1)][0] = 1
@@ -484,22 +484,20 @@ class GridManager():
 				if nextBall == currColor and currColor != BG_COLOR:
 					self.grid_state[row][int((((currX-150)/(16.125)))+1)][3] = 1
 					self.grid_state[row][int((((currX-150)/(16.125)))+2)][3] = 1
-				
 
-
-	#Return nextState and reward for current action
+	# Return nextState and reward for current action
 	def gameInfo(self, game):
 		score_diff = game.score-game.prev_score
 		reward = 0
-		if game.over == True:
+		if game.over:
 			reward = -15
-		elif self.curr_hit == False:
+		elif not self.curr_hit:
 			reward = -1
-		elif self.curr_hit == True: 
+		elif self.curr_hit:
 			if score_diff > 0:
 				reward = score_diff
 			else:
 				reward = 1
-		print("Tu reward es",reward)
+		print("Tu reward es", reward)
 		return self.grid_state, reward
 
