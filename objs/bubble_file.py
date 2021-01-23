@@ -1,11 +1,13 @@
 from objs.constants import *
 from math import sin, cos
-import random, time
+import random
+import time
 import pygame.gfxdraw
 
-class Bubble():
 
-	def __init__(self, pos, color = None):
+class Bubble:
+
+	def __init__(self, pos, color=None):
 
 		if color is None: self.color = random.choice(BUBBLE_COLORS)
 		else:			  self.color = color
@@ -20,7 +22,7 @@ class Bubble():
 
 		x, y = self.pos[0], self.pos[1]
 
-		self.pos = ( x + random.choice(self.shake_options), y + random.choice(self.shake_options))
+		self.pos = (x + random.choice(self.shake_options), y + random.choice(self.shake_options))
 		self.draw()
 		self.pos = (x, y)
 
@@ -40,7 +42,6 @@ class Bubble():
 		pg.gfxdraw.aacircle(display, x, y, BUBBLE_RADIUS, outline_color)
 
 
-
 class Bullet(Bubble):
 
 	def __init__(self, pos, angle, color = None):
@@ -58,8 +59,10 @@ class Bullet(Bubble):
 
 			x, y = self.pos
 
-			if   (x - BUBBLE_RADIUS) <= WALL_BOUND_L: self.dx *= -1
-			elif (x + BUBBLE_RADIUS) >= WALL_BOUND_R: self.dx *= -1
+			if (x - BUBBLE_RADIUS) <= WALL_BOUND_L:
+				self.dx *= -1
+			elif (x + BUBBLE_RADIUS) >= WALL_BOUND_R:
+				self.dx *= -1
 
 			self.pos = (x + self.dx, y + self.dy)
 
@@ -95,7 +98,8 @@ class GridBubble(Bubble):
 		return alive_comrades
 
 	def pop(self):
-		if self.exists == False: raise ValueError('Trying to pop bubble that doesn\'t exist: ({}, {})'.format(self.row, self.col))
+		if not self.exists:
+			raise ValueError('Trying to pop bubble that doesn\'t exist: ({}, {})'.format(self.row, self.col))
 
 		frames = []
 		x, y = int(self.pos[0]), int(self.pos[1])

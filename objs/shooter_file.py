@@ -5,9 +5,9 @@ from math import sin, cos, radians, degrees, atan2
 import pygame as pg
 
 
-class Shooter():
+class Shooter:
 
-	def __init__(self, image = 'images/gun.png', pos = display_rect.center):
+	def __init__(self, image='images/gun.png', pos=display_rect.center):
 
 		# center position of the image
 		self.pos = pos
@@ -30,8 +30,6 @@ class Shooter():
 		self.reload2 = Bubble(self.reload2_pos)
 		self.reload3 = Bubble(self.reload3_pos)
 
-
-
 	def initGunImage(self, image):
 		# Load image
 		self.shooter = pg.image.load(image).convert_alpha()
@@ -50,28 +48,28 @@ class Shooter():
 		self.shooter_w = self.shooter_rect[2]
 		self.shooter_h = self.shooter_rect[3]
 
-
-	# I could have put this in the initialization but I wanted to emphasize the fact that the image we are actually rotating is in a box
+	# I could have put this in the initialization but I wanted to emphasize
+	# the fact that the image we are actually rotating is in a box
 	def putInBox(self):
 
 		# Make a box to put shooter in
 		# Surface((width, height), flags=0, depth=0, masks=None) -> Surface
 		self.shooter_box = pg.Surface((self.shooter_w, self.shooter_h*2), pg.SRCALPHA, 32)
-		self.shooter_box.fill((0,0,0,0))
+		self.shooter_box.fill((0, 0, 0, 0))
 
 		# Put shooter in box
-		self.shooter_box.blit(self.shooter, (0,0))
+		self.shooter_box.blit(self.shooter, (0, 0))
 
 		# Since we want 90 to be when the shooter is pointing straight up, we rotate it
 		self.shooter_box = pg.transform.rotate(self.shooter_box, -90)
 
-
 	def initCrossHair(self):
 
-		#invis cursor
-		pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+		# invis cursor
+		pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0),
+								(0, 0, 0, 0, 0, 0, 0, 0))
 
-		#Load and draw crosshair
+		# Load and draw crosshair
 		crosshair = pygame.image.load('images/crosshair.png')
 		sf = 00.20
 		self.crosshair = pg.transform.scale(crosshair, (int(crosshair.get_width() * sf), int(crosshair.get_height() * sf)))
@@ -84,7 +82,7 @@ class Shooter():
 	def draw_line(self):
 
 		# line(Surface, color, start_pos, end_pos, width=1) -> Rect
-		end = ( (cos(radians(self.angle)) * AIM_LENGTH) + DISP_W/2, DISP_H - (sin(radians(self.angle)) * AIM_LENGTH))
+		end = ((cos(radians(self.angle)) * AIM_LENGTH) + DISP_W/2, DISP_H - (sin(radians(self.angle)) * AIM_LENGTH))
 		
 		pg.draw.line(display, BLACK, self.pos, end)
 
@@ -102,10 +100,7 @@ class Shooter():
 		rotated_box = pg.transform.rotate(self.shooter_box, self.angle)
 
 		# display the image
-		display.blit(rotated_box, rotated_box.get_rect( center = self.pos))
-
-		
-
+		display.blit(rotated_box, rotated_box.get_rect(center=self.pos))
 
 	def draw_bullets(self):
 
@@ -114,11 +109,11 @@ class Shooter():
 		self.reload1.draw()
 		self.reload2.draw()
 		self.reload3.draw()
-		
 
 	def fire(self):
 
-		if self.fired.exists: return
+		if self.fired.exists:
+			return
 
 		else:
 			rads = radians(self.angle)
@@ -135,8 +130,8 @@ class Shooter():
 		# Do some quick maths and get the angle
 		width = mouse_x - self.pos_x
 		height = self.pos_y - mouse_y
-		angle = atan2(height,width)
+		angle = atan2(height, width)
 		degree = degrees(angle)		# convert to degrees
 
 		# Restrict the angles, we don't want the user to be able to point all the way
-		return max(min(degree , ANGLE_MAX), ANGLE_MIN)
+		return max(min(degree, ANGLE_MAX), ANGLE_MIN)

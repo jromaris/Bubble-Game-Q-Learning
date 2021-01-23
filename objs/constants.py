@@ -11,31 +11,31 @@ APPEND_COUNTDOWN = 5
 
 
 DISP_W = 900
-DISP_H = 700
-BOTTOM_CENTER = (450,700)
+DISP_H = 600
+BOTTOM_CENTER = (450, 600)
 DISP_CENTER = (DISP_W/2, DISP_H/2)
 
 
 # create display
-display = pg.display.set_mode((DISP_W,DISP_H))
+display = pg.display.set_mode((DISP_W, DISP_H))
 display_rect = display.get_rect()
 pg.display.set_caption('Bubbles 2.0')
 clock = pg.time.Clock()
 
 # colours
-BLACK = (0, 0, 0 )
+BLACK = (0, 0, 0)
 LIGHT_GRAY = (122, 122, 122)
-DARK_GRAY = (60,60,60)
+DARK_GRAY = (60, 60, 60)
 WHITE = (255, 255, 255)
-RED   = (255, 0, 0)
+RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-BLUE  = (0, 0, 255)
+BLUE = (0, 0, 255)
 ORANGE = (255, 165, 0)
 YELLOW = (255, 255, 0)
 VIOLET = (127, 0, 255)
 
 # Ball colours
-BUBBLE_COLORS = [RED,YELLOW,GREEN,BLUE,VIOLET]
+BUBBLE_COLORS = [RED, YELLOW, GREEN, BLUE, VIOLET]
 BG_COLOR = 'No color'
 
 AIM_LENGTH = 200
@@ -57,9 +57,7 @@ GAMEOVER_ROWS = 20
 
 HITBOX_SIZE = (BUBBLE_RADIUS * 2) - 4
 
-
-
-#Game environment constants
+# Game environment constants
 WALL_WIDTH = 120
 FLOOR_HEIGHT = DISP_H - (2 * BUBBLE_RADIUS * (GAMEOVER_ROWS - 1))
 ROOM_WIDTH = DISP_W - (2 * WALL_WIDTH)

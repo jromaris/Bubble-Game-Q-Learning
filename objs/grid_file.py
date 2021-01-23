@@ -6,8 +6,7 @@ import pygame as pg
 import numpy as np
 
 
-
-class GridManager():
+class GridManager:
 
 	def __init__(self):
 		self.curr_hit = False
@@ -45,17 +44,17 @@ class GridManager():
 		self.paths = []				# The list if animations for the root search (lines) effect when visualtions are on
 		self.prev_time = 0			# used for the paths (root search) animation
 
-		#grids for reinforced learning
+		# grids for reinforced learning
 		self.grid_state = np.zeros((GAMEOVER_ROWS+1,GRID_COLS*2+1,4))
-		#grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
-		#grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
-		#grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
-		#grid_state[][][3] pelotas que no matchean con la pelota proxima que tiene el shooter
+		# grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
+		# grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
+		# grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
+		# grid_state[][][3] pelotas que no matchean con la pelota proxima que tiene el shooter
 
-		#self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
 		print(self.grid_state.shape)
 
@@ -63,14 +62,15 @@ class GridManager():
 	def view(self, gun, game):
 
 		# if a bullet has been fired, check for collisions, pretty simple
-		if gun.fired.exists: self.checkCollision(gun.fired)
+		if gun.fired.exists:
+			self.checkCollision(gun.fired)
 		
 		# if there's been a collision, we gotta update the grid
 		if self.collided: 
 			self.collision_counter += 1
 			bubble = self.reviveBubble(gun.fired)
 			
-			#Check if the new bubble has any adjacent bubble of the same color
+			# Check if the new bubble has any adjacent bubble of the same color
 			for b in bubble.getComrades():
 				if bubble.color == b.color:
 					self.curr_hit = True
@@ -161,7 +161,7 @@ class GridManager():
 			x,y = collide_point
 			bubble_x, bubble_y = bubble.pos
 
-			dist = sqrt( (((x - bubble_x) ** 2) + (y - bubble_y) ** 2) )
+			dist = sqrt((((x - bubble_x) ** 2) + (y - bubble_y) ** 2))
 			dists.append(dist)
 
 		# get the index if the closest non-existent bubble
@@ -399,9 +399,9 @@ class GridManager():
 
 				else: self.grid[row][col].draw()
 
-#ESTO ES DE DEBUG
+# ESTO ES DE DEBUG
 				# apply it to text on a label
-				label = self.myfont.render(str(row)+str(col), 1, (0,0,0))
+				label = self.myfont.render(str(row)+str(col), True, (0, 0, 0))
 				# put the label object on the screen at point x=100, y=100
 				display.blit(label, self.grid[row][col].pos)
 		
@@ -428,7 +428,6 @@ class GridManager():
 						x_vec = (comrade_x - bubble_x)/2
 						y_vec = (comrade_y - bubble_y)/2
 
-
 						pg.draw.line(display, BLACK, bubble.pos, (bubble_x + x_vec, bubble_y + y_vec))
 
 		if SHOW_TARGETS or VISUALIZATIONS:
@@ -444,13 +443,11 @@ class GridManager():
 				hitbox.fill((50, 50, 50, 180))
 				display.blit(hitbox, (x - HITBOX_SIZE/2, y - HITBOX_SIZE/2))
 
-
 		if SHOW_ROOT_PATH or VISUALIZATIONS:
 			for path in self.paths:
 				for idx in range(len(path)):
 					if idx == 0: continue
 					pg.draw.line(display, BLACK, path[idx-1].pos, path[idx].pos, 3)
-
 
 			if time.time() - self.prev_time > 0.01:
 				self.prev_time = time.time()
@@ -458,19 +455,19 @@ class GridManager():
 					del self.paths[0][0]
 					if not self.paths[0]: del self.paths[0]
 
-	def learnGrid(self,currBall,nextBall):
-		#self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+	def learnGrid(self, currBall, nextBall):
+		# self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
 		self.grid_state = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1,4))
 		for row in range(self.rows):
-			#print("Row", row)
+			# print("Row", row)
 			for col in range(self.cols):
-				#print("Col", col)
+				# print("Col", col)
 				currX = self.grid[row][col].pos[0]
-				#print("CurrX", currX)
+				# print("CurrX", currX)
 				currColor = self.grid[row][col].color
 				if currBall == currColor:
 					self.grid_state[row][int((((currX-150)/(16.125)))+1)][0] = 1
@@ -484,22 +481,20 @@ class GridManager():
 				if nextBall == currColor and currColor != BG_COLOR:
 					self.grid_state[row][int((((currX-150)/(16.125)))+1)][3] = 1
 					self.grid_state[row][int((((currX-150)/(16.125)))+2)][3] = 1
-				
 
-
-	#Return nextState and reward for current action
+	# Return nextState and reward for current action
 	def gameInfo(self, game):
 		score_diff = game.score-game.prev_score
 		reward = 0
-		if game.over == True:
+		if game.over:
 			reward = -15
-		elif self.curr_hit == False:
+		elif not self.curr_hit:
 			reward = -1
-		elif self.curr_hit == True: 
+		elif self.curr_hit:
 			if score_diff > 0:
 				reward = score_diff
 			else:
 				reward = 1
-		print("Tu reward es",reward)
+		print("Tu reward es", reward)
 		return self.grid_state, reward
 
