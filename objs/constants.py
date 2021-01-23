@@ -11,13 +11,13 @@ APPEND_COUNTDOWN = 5
 
 
 DISP_W = 900
-DISP_H = 700
-BOTTOM_CENTER = (450, 700)
+DISP_H = 600
+BOTTOM_CENTER = (450, 600)
 DISP_CENTER = (DISP_W/2, DISP_H/2)
 
 
 # create display
-display = pg.display.set_mode((DISP_W,DISP_H))
+display = pg.display.set_mode((DISP_W, DISP_H))
 display_rect = display.get_rect()
 pg.display.set_caption('Bubbles 2.0')
 clock = pg.time.Clock()
@@ -35,7 +35,7 @@ YELLOW = (255, 255, 0)
 VIOLET = (127, 0, 255)
 
 # Ball colours
-BUBBLE_COLORS = [RED,YELLOW,GREEN,BLUE,VIOLET]
+BUBBLE_COLORS = [RED, YELLOW, GREEN, BLUE, VIOLET]
 BG_COLOR = 'No color'
 
 AIM_LENGTH = 200

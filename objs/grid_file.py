@@ -6,7 +6,6 @@ import pygame as pg
 import numpy as np
 
 
-
 class GridManager:
 
 	def __init__(self):
@@ -45,17 +44,17 @@ class GridManager:
 		self.paths = []				# The list if animations for the root search (lines) effect when visualtions are on
 		self.prev_time = 0			# used for the paths (root search) animation
 
-		#grids for reinforced learning
+		# grids for reinforced learning
 		self.grid_state = np.zeros((GAMEOVER_ROWS+1,GRID_COLS*2+1,4))
-		#grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
-		#grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
-		#grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
-		#grid_state[][][3] pelotas que no matchean con la pelota proxima que tiene el shooter
+		# grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
+		# grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
+		# grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
+		# grid_state[][][3] pelotas que no matchean con la pelota proxima que tiene el shooter
 
-		#self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-		#self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+		# self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
 		print(self.grid_state.shape)
 
@@ -63,14 +62,15 @@ class GridManager:
 	def view(self, gun, game):
 
 		# if a bullet has been fired, check for collisions, pretty simple
-		if gun.fired.exists: self.checkCollision(gun.fired)
+		if gun.fired.exists:
+			self.checkCollision(gun.fired)
 		
 		# if there's been a collision, we gotta update the grid
 		if self.collided: 
 			self.collision_counter += 1
 			bubble = self.reviveBubble(gun.fired)
 			
-			#Check if the new bubble has any adjacent bubble of the same color
+			# Check if the new bubble has any adjacent bubble of the same color
 			for b in bubble.getComrades():
 				if bubble.color == b.color:
 					self.curr_hit = True
@@ -161,7 +161,7 @@ class GridManager:
 			x,y = collide_point
 			bubble_x, bubble_y = bubble.pos
 
-			dist = sqrt( (((x - bubble_x) ** 2) + (y - bubble_y) ** 2) )
+			dist = sqrt((((x - bubble_x) ** 2) + (y - bubble_y) ** 2))
 			dists.append(dist)
 
 		# get the index if the closest non-existent bubble
@@ -428,7 +428,6 @@ class GridManager:
 						x_vec = (comrade_x - bubble_x)/2
 						y_vec = (comrade_y - bubble_y)/2
 
-
 						pg.draw.line(display, BLACK, bubble.pos, (bubble_x + x_vec, bubble_y + y_vec))
 
 		if SHOW_TARGETS or VISUALIZATIONS:
@@ -444,13 +443,11 @@ class GridManager:
 				hitbox.fill((50, 50, 50, 180))
 				display.blit(hitbox, (x - HITBOX_SIZE/2, y - HITBOX_SIZE/2))
 
-
 		if SHOW_ROOT_PATH or VISUALIZATIONS:
 			for path in self.paths:
 				for idx in range(len(path)):
 					if idx == 0: continue
 					pg.draw.line(display, BLACK, path[idx-1].pos, path[idx].pos, 3)
-
 
 			if time.time() - self.prev_time > 0.01:
 				self.prev_time = time.time()
@@ -458,7 +455,7 @@ class GridManager:
 					del self.paths[0][0]
 					if not self.paths[0]: del self.paths[0]
 
-	def learnGrid(self, currBall,nextBall):
+	def learnGrid(self, currBall, nextBall):
 		# self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 		# self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))

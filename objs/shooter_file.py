@@ -7,7 +7,7 @@ import pygame as pg
 
 class Shooter:
 
-	def __init__(self, image = 'images/gun.png', pos = display_rect.center):
+	def __init__(self, image='images/gun.png', pos=display_rect.center):
 
 		# center position of the image
 		self.pos = pos
@@ -55,10 +55,10 @@ class Shooter:
 		# Make a box to put shooter in
 		# Surface((width, height), flags=0, depth=0, masks=None) -> Surface
 		self.shooter_box = pg.Surface((self.shooter_w, self.shooter_h*2), pg.SRCALPHA, 32)
-		self.shooter_box.fill((0,0,0,0))
+		self.shooter_box.fill((0, 0, 0, 0))
 
 		# Put shooter in box
-		self.shooter_box.blit(self.shooter, (0,0))
+		self.shooter_box.blit(self.shooter, (0, 0))
 
 		# Since we want 90 to be when the shooter is pointing straight up, we rotate it
 		self.shooter_box = pg.transform.rotate(self.shooter_box, -90)
@@ -82,7 +82,7 @@ class Shooter:
 	def draw_line(self):
 
 		# line(Surface, color, start_pos, end_pos, width=1) -> Rect
-		end = ( (cos(radians(self.angle)) * AIM_LENGTH) + DISP_W/2, DISP_H - (sin(radians(self.angle)) * AIM_LENGTH))
+		end = ((cos(radians(self.angle)) * AIM_LENGTH) + DISP_W/2, DISP_H - (sin(radians(self.angle)) * AIM_LENGTH))
 		
 		pg.draw.line(display, BLACK, self.pos, end)
 
@@ -100,7 +100,7 @@ class Shooter:
 		rotated_box = pg.transform.rotate(self.shooter_box, self.angle)
 
 		# display the image
-		display.blit(rotated_box, rotated_box.get_rect( center = self.pos))
+		display.blit(rotated_box, rotated_box.get_rect(center=self.pos))
 
 	def draw_bullets(self):
 
@@ -112,7 +112,8 @@ class Shooter:
 
 	def fire(self):
 
-		if self.fired.exists: return
+		if self.fired.exists:
+			return
 
 		else:
 			rads = radians(self.angle)
@@ -129,8 +130,8 @@ class Shooter:
 		# Do some quick maths and get the angle
 		width = mouse_x - self.pos_x
 		height = self.pos_y - mouse_y
-		angle = atan2(height,width)
+		angle = atan2(height, width)
 		degree = degrees(angle)		# convert to degrees
 
 		# Restrict the angles, we don't want the user to be able to point all the way
-		return max(min(degree , ANGLE_MAX), ANGLE_MIN)
+		return max(min(degree, ANGLE_MAX), ANGLE_MIN)

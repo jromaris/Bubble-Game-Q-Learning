@@ -24,8 +24,10 @@ def main():
 	print(gun.reload3.color)
 	grid_manager = GridManager()
 	game = Game()	
-	cheat_manager = CheatManager(grid_manager, gun)
-	grid_manager.view(gun, game)	# Check collision with bullet and update grid as needed	
+	# cheat_manager = CheatManager(grid_manager, gun)
+	# Check collision with bullet and update grid as needed
+	grid_manager.view(gun, game)
+
 	# print(len(grid_manager.grid))
 	# print("FILA 0 COLUMNA 0")
 	# print(grid_manager.grid[0][0].pos)
@@ -61,26 +63,29 @@ def main():
 				quit()
 
 			# get mouse position
-			if event.type == pg.MOUSEMOTION: mouse_pos = pg.mouse.get_pos()
+			if event.type == pg.MOUSEMOTION:
+				mouse_pos = pg.mouse.get_pos()
 				
 			# if you click, fire a bullet
-			if event.type == pg.MOUSEBUTTONDOWN: gun.fire()
+			if event.type == pg.MOUSEBUTTONDOWN:
+				gun.fire()
 			
 			if event.type == pg.KEYDOWN:
-				cheat_manager.view(event) # if a key is pressed, the cheat manager should know about it
+				# cheat_manager.view(event) # if a key is pressed, the cheat manager should know about it
 
 				# Ctrl+C to quit
 				if event.key == pg.K_c and pg.key.get_mods() & pg.KMOD_CTRL:
 					pg.quit()
 					quit()
 
-		
-		background.draw()				# Draw BG first		
+		# Draw BG first
+		background.draw()
 
-		grid_manager.view(gun, game)	# Check collision with bullet and update grid as needed		
+		# Check collision with bullet and update grid as needed
+		grid_manager.view(gun, game)
 
-		#ACA IRIA LA PARTE DE LA RED NEURONAL
-		#print(grid_manager.grid[0][0].__dict__)
+		# ACA IRIA LA PARTE DE LA RED NEURONAL
+		# print(grid_manager.grid[0][0].__dict__)
 
 		gun.rotate(mouse_pos)			# Rotate the gun if the mouse is moved		
 		gun.draw_bullets()				# Draw and update bullet and reloads	
@@ -90,10 +95,12 @@ def main():
 		pg.display.update()		
 		clock.tick(60)					# 60 FPS
 
-		#print(gun.angle)
+		# print(gun.angle)
 	game.gameOverScreen(grid_manager, background)
 
 	return
 
+
 if __name__ == '__main__': 
-	while True: main()
+	while True:
+		main()

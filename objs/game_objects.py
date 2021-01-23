@@ -76,10 +76,10 @@ class Background:
 		self.image = self.getImage()
 
 		self.wall = pg.Surface((WALL_WIDTH, DISP_H), pg.SRCALPHA, 32)
-		self.wall.fill((122,122,122,122))
+		self.wall.fill((122, 122, 122, 122))
 
-		self.floor = pg.Surface((ROOM_WIDTH,FLOOR_HEIGHT), pg.SRCALPHA, 32)
-		self.floor.fill((200,0,0,90))
+		self.floor = pg.Surface((ROOM_WIDTH, FLOOR_HEIGHT), pg.SRCALPHA, 32)
+		self.floor.fill((200, 0, 0, 90))
 
 	def getImage(self):
 		# Load and draw background image

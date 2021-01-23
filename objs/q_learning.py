@@ -90,7 +90,7 @@ def train_step(states, actions, rewards, next_states, dones):
     target = rewards + (1. - dones) * discount * max_next_qs
     with tf.GradientTape() as tape:
         qs = main_nn(states)
-        action_masks = tf.one_hot(actions, num_actions)
+        action_masks = tf.one_hot(actions, NUM_ACTIONS)
         masked_qs = tf.reduce_sum(action_masks * qs, axis=-1)
         loss = mse(target, masked_qs)
     grads = tape.gradient(loss, main_nn.trainable_variables)
