@@ -12,6 +12,9 @@ import tensorflow as tf
 import pprint
 from objs.plotter import gudermannian, genlogistic, genlog_func
 
+TEST = False
+MODELS_PATH = 'new_models'
+
 pg.init()
 
 
@@ -82,8 +85,7 @@ def handle_game_events():
 				quit()
 
 
-def main():
-	first = False
+def train():
 	num_actions = 180 - 30
 	num_episodes = 1000
 	epsilon = 0.96
@@ -97,12 +99,13 @@ def main():
 	optimizer = tf.keras.optimizers.Adam(1e-4)
 	mse = tf.keras.losses.MeanSquaredError()
 
-	first = False
 	gun_fired = True
 
 	# Start training. Play game once and then train with a batch.
 	last_100_ep_rewards = []
 	angles = [i for i in range(15, 165)]
+	action = random.randint(15, 164)
+
 	for episode in range(num_episodes + 1):
 		first = True
 
@@ -161,11 +164,10 @@ def main():
 								states=states, actions=actions, rewards=rewards,
 								next_states=next_states, dones=dones, discount=discount,
 								num_actions=num_actions)
+
 		print('genlog_func(Epsilon): ', genlog_func(epsilon))
-		if episode < 950:
-			epsilon -= 0.001
-		elif episode == 998:
-			epsilon = 0.001
+		epsilon -= 0.001
+		if episode == 998:
 			print('Ante-último')
 		if len(last_100_ep_rewards) == 100:
 			last_100_ep_rewards = last_100_ep_rewards[1:]
@@ -175,8 +177,56 @@ def main():
 			print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
 				  f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
 
+		main_nn.save(MODELS_PATH)
+		del main_nn
 
-if __name__ == '__main__': 
-	# while True:
-	# 	main()
+
+def test():
+	num_actions = 180 - 30
+
+	main_nn = tf.keras.models.load_model(MODELS_PATH)
+	angles = [i for i in range(15, 165)]
+	action = random.randint(15, 164)
+
+	first = True
+	gun_fired = False
+
+	game, background, grid_manager, gun, mouse_pos = reset_game()
+
+	ep_reward, done = 0, False
+	while not done:  # or won game
+		handle_game_events()
+
+		background.draw()
+
+		state = grid_manager.grid_state
+		grid_manager.view(gun, game)
+
+		if not first:
+			gun_fired = gun.fire()
+		if not gun_fired:
+			state_in = tf.expand_dims(state, axis=0)
+			action = select_epsilon_greedy_action(main_nn, state_in,
+												  genlog_func(0), num_actions)
+
+		gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
+
+		gun.draw_bullets()  # Draw and update bullet and reloads
+
+		game.drawScore()  # draw score
+
+		pg.display.update()
+		clock.tick(60)  # 60 FPS
+
+		done = game.over  # or game.won
+
+
+def main():
+	if TEST:
+		test()
+	else:
+		train()
+
+
+if __name__ == '__main__':
 	main()
