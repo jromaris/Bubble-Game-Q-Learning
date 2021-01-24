@@ -10,6 +10,7 @@ class GridManager:
 
 	def __init__(self):
 		self.curr_hit = False
+		self.curr_balls = 0
 		self.myfont = pg.font.SysFont("Comic Sans MS", 7)				# pick a font you have and set its size
 		self.rows = GRID_ROWS		# Initialize the amount of rows
 		self.cols = GRID_COLS		# Initialize the amount if cols
@@ -456,6 +457,7 @@ class GridManager:
 					if not self.paths[0]: del self.paths[0]
 
 	def learnGrid(self, currBall, nextBall):
+		self.curr_balls = 0
 		# self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 		# self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
@@ -470,11 +472,13 @@ class GridManager:
 				# print("CurrX", currX)
 				currColor = self.grid[row][col].color
 				if currBall == currColor:
+					self.curr_balls += 1
 					self.grid_state[row][int((((currX-150)/(16.125)))+1)][0] = 1
 					self.grid_state[row][int((((currX-150)/(16.125)))+2)][0] = 1
 				if currBall != currColor and currColor != BG_COLOR:
 					self.grid_state[row][int((((currX-150)/(16.125)))+1)][1] = 1
 					self.grid_state[row][int((((currX-150)/(16.125)))+2)][1] = 1
+					self.curr_balls += 1
 				if nextBall == currColor:
 					self.grid_state[row][int((((currX-150)/(16.125)))+1)][2] = 1
 					self.grid_state[row][int((((currX-150)/(16.125)))+2)][2] = 1
@@ -487,14 +491,13 @@ class GridManager:
 		score_diff = game.score-game.prev_score
 		reward = 0
 		if game.over:
-			reward = -15
+			reward = -6000
+		# elif ganaste: reward = 6000
 		elif not self.curr_hit:
-			reward = -1
+			reward = -self.curr_balls
 		elif self.curr_hit:
-			if score_diff > 0:
-				reward = score_diff
-			else:
-				reward = 1
+			reward = -self.curr_balls
+
 		print("Tu reward es", reward)
 		return self.grid_state, reward
 
