@@ -88,7 +88,7 @@ def handle_game_events():
 def train():
 	num_actions = 180 - 30
 	num_episodes = 1000
-	epsilon = 0.96
+	epsilon = 1
 	buffer = ReplayBuffer(100000)
 	batch_size = 32
 	discount = 0.99
