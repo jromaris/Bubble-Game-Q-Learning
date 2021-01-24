@@ -465,7 +465,7 @@ class GridManager:
 		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 		# self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
-		self.grid_state = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1,4))
+		self.grid_state = np.zeros((GAMEOVER_ROWS, GRID_COLS*2+1, 4))
 		for row in range(self.rows):
 			# print("Row", row)
 			for col in range(self.cols):
@@ -500,6 +500,6 @@ class GridManager:
 		elif self.curr_hit:
 			reward = -self.curr_balls
 
-		print("Tu reward es", reward)
+		# print("Tu reward es", reward)
 		return self.grid_state, reward
 

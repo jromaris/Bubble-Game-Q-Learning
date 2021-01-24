@@ -7,6 +7,7 @@ from objs.shooter_file import *
 from objs.game_objects import *
 from objs.q_learning import ReplayBuffer, DQN, select_epsilon_greedy_action, train_step
 import pygame as pg
+import numpy as np
 import tensorflow as tf
 import pprint
 
@@ -62,7 +63,8 @@ def reset_game():
 
 def main():
 
-	num_actions = 180
+	first = False
+	num_actions = 180 - 30
 	num_episodes = 1000
 	epsilon = 1.0
 	buffer = ReplayBuffer(100000)
@@ -75,38 +77,49 @@ def main():
 	optimizer = tf.keras.optimizers.Adam(1e-4)
 	mse = tf.keras.losses.MeanSquaredError()
 
+	first = False
+	gun_fired = True
+
 	# Start training. Play game once and then train with a batch.
 	last_100_ep_rewards = []
-	angles = [i for i in range(num_actions)]
+	angles = [i for i in range(15, 165)]
 	for episode in range(num_episodes + 1):
+		first = True
+		gun_fired = True
+
 		game, background, grid_manager, gun, mouse_pos = reset_game()
 
 		ep_reward, done = 0, False
 		while not done:	 # or won game
 			state = grid_manager.grid_state
-			state_in = tf.expand_dims(state, axis=0)
-			action = select_epsilon_greedy_action(main_nn, state_in, epsilon)
-
-			gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
-			gun.fire()
 
 			# Draw BG first
 			background.draw()
 
 			# Check collision with bullet and update grid as needed
 			grid_manager.view(gun, game)
-			# ACA IRIA LA PARTE DE LA RED NEURONAL
-			# print(grid_manager.grid[0][0].__dict__)
+			state_in = tf.expand_dims(state, axis=0)
+
+			if not first and not gun_fired:
+				action = select_epsilon_greedy_action(main_nn, state_in, epsilon, num_actions)
+			else:
+				action = random.randint(0, len(angles)-1)
+			# print('Action: ', action)
+			# print('Angle: ', angles[action])
+			# print('\n')
+			gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
+			if not first:
+				gun_fired = gun.fire()
 
 			gun.draw_bullets()  # Draw and update bullet and reloads
 
 			game.drawScore()  # draw score
 
 			pg.display.update()
-			clock.tick(60)  # 60 FPS
+			clock.tick(1)  # 60 FPS
 
 			next_state, reward = grid_manager.gameInfo(game)
-			# next_state, reward, done, info = env.step(action)
+			# next_state = next_state.astype(dtype=np.float32)
 
 			ep_reward += reward
 

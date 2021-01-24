@@ -14,7 +14,7 @@ class Shooter:
 		self.pos_x, self.pos_y = pos
 
 		self.initGunImage(image)
-		self.initCrossHair()
+		# self.initCrossHair()
 
 		self.angle = 0
 
@@ -90,8 +90,8 @@ class Shooter:
 	def rotate(self, angle):
 		self.draw_line()
 
-		self.crosshair_rect.center = (BOTTOM_CENTER[0] + 150*cos(angle), BOTTOM_CENTER[1] - 150*sin(angle))
-		display.blit(self.crosshair, self.crosshair_rect)
+		# self.crosshair_rect.center = (BOTTOM_CENTER[0] + 150*cos(angle), BOTTOM_CENTER[1] - 150*sin(angle))
+		# display.blit(self.crosshair, self.crosshair_rect)
 
 		# Get angle of rotation (in degrees)
 		self.angle = angle
@@ -113,8 +113,7 @@ class Shooter:
 	def fire(self):
 
 		if self.fired.exists:
-			return
-
+			pass
 		else:
 			rads = radians(self.angle)
 			self.fired = Bullet(self.pos, rads, self.loaded.color)
@@ -122,6 +121,9 @@ class Shooter:
 			self.reload1 = Bubble(self.reload1_pos, self.reload2.color)
 			self.reload2 = Bubble(self.reload2_pos, self.reload3.color)
 			self.reload3 = Bubble(self.reload3_pos)
+
+		return self.fired.exists
+
 
 	def calcMouseAngle(self, mouse_pos):
 		# Get mouse position and decompose it into x and y
