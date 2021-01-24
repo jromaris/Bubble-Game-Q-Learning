@@ -27,8 +27,6 @@ class DQN(tf.keras.Model):
 
     def call(self, x, training=True, mask=None):
         """Forward pass."""
-        # print('x.shape: ', x.shape)
-        # print('type(x): ', type(x))
         x = self.input_lay(x)
         x = self.conv1(x)
         x = self.conv2(x)
