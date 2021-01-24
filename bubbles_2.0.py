@@ -177,8 +177,8 @@ def train():
 			print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
 				  f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
 
-		main_nn.save(MODELS_PATH)
-		del main_nn
+	main_nn.save(MODELS_PATH)
+	del main_nn
 
 
 def test():
