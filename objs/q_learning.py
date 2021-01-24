@@ -17,9 +17,9 @@ class DQN(tf.keras.Model):
         super(DQN, self).__init__()
 
         self.input_lay = tf.keras.layers.InputLayer(input_shape=(None, 21, 41, 4))
-        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size = (6,6), strides=(1, 1), activation='relu')
-        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size = (2,2), strides=(1, 1), activation='relu')
-        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size = (2,2), strides=(1, 1), activation='relu')
+        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(6, 6), strides=(1, 1), activation='relu')
+        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1), activation='relu')
+        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size=(2, 2), strides=(1, 1), activation='relu')
         self.flat = tf.keras.layers.Flatten()
         self.dense1 = tf.keras.layers.Dense(512, activation='relu')
         self.dense2 = tf.keras.layers.Dense(512, activation='relu')
@@ -70,18 +70,19 @@ class ReplayBuffer(object):
         return states, actions, rewards, next_states, dones
 
 
-def select_epsilon_greedy_action(state, epsilon):
+def select_epsilon_greedy_action(main_nn, state, epsilon, num_actions):
     """Take random action with probability epsilon, else take best action."""
     result = tf.random.uniform((1,))
     if result < epsilon:
-        return env.action_space.sample()    # Random action (left or right).
+        return random.randint(0, num_actions)
     else:
         return tf.argmax(main_nn(state)[0]).numpy()
         # Greedy action for state.
 
 
 @tf.function
-def train_step(states, actions, rewards, next_states, dones, discount, num_actions):
+def train_step(main_nn, target_nn, mse, optimizer, states, actions,
+               rewards, next_states, dones, discount, num_actions):
     """Perform a training iteration on a batch of data sampled from the experience
     replay buffer."""
     # Calculate targets.

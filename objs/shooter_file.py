@@ -87,14 +87,14 @@ class Shooter:
 		pg.draw.line(display, BLACK, self.pos, end)
 
 	# Rotates an image and displays it
-	def rotate(self, mouse_pos):
+	def rotate(self, angle):
 		self.draw_line()
 
-		self.crosshair_rect.center = mouse_pos
+		self.crosshair_rect.center = (BOTTOM_CENTER[0] + 150*cos(angle), BOTTOM_CENTER[1] - 150*sin(angle))
 		display.blit(self.crosshair, self.crosshair_rect)
 
 		# Get angle of rotation (in degrees)
-		self.angle = self.calcMouseAngle(mouse_pos)
+		self.angle = angle
 
 		# Get a rotated version of the box to display. Note: don't keep rotating the original as that skews the image
 		rotated_box = pg.transform.rotate(self.shooter_box, self.angle)
