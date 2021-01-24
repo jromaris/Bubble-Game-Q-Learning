@@ -103,6 +103,7 @@ def main():
 				gun_fired = gun.fire()
 				if not gun_fired:
 					action = select_epsilon_greedy_action(main_nn, state_in, epsilon, num_actions)
+					# print('Action: ', action)
 			else:
 				action = random.randint(0, len(angles) - 1)
 				first = False
@@ -114,7 +115,7 @@ def main():
 			game.drawScore()  # draw score
 
 			pg.display.update()
-			clock.tick(60)  # 60 FPS
+			clock.tick(40)  # 60 FPS
 
 			next_state, reward = grid_manager.gameInfo(game)
 			# next_state = next_state.astype(dtype=np.float32)
@@ -132,6 +133,7 @@ def main():
 
 			# Train neural network.
 			if len(buffer) >= batch_size and not first and not gun_fired:
+				print('Reward: ', reward)
 				states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 				loss = train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
 								states=states, actions=actions, rewards=rewards,

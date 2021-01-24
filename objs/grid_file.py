@@ -496,10 +496,11 @@ class GridManager:
 			reward = -6000
 		# elif ganaste: reward = 6000
 		elif not self.curr_hit:
-			reward = -self.curr_balls
+			reward = -self.curr_balls + 200
+			# reward = -1
 		elif self.curr_hit:
-			reward = -self.curr_balls
+			# reward = 1
+			reward = -self.curr_balls + 200
 
-		# print("Tu reward es", reward)
 		return self.grid_state, reward
 

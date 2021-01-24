@@ -111,7 +111,7 @@ class Shooter:
 		self.reload3.draw()
 
 	def fire(self):
-
+		exists = self.fired.exists
 		if self.fired.exists:
 			pass
 		else:
@@ -122,7 +122,7 @@ class Shooter:
 			self.reload2 = Bubble(self.reload2_pos, self.reload3.color)
 			self.reload3 = Bubble(self.reload3_pos)
 
-		return self.fired.exists
+		return exists
 
 
 	def calcMouseAngle(self, mouse_pos):
