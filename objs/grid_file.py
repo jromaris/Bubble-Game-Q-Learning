@@ -58,7 +58,7 @@ class GridManager:
         # self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
         # self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
-        print(self.grid_state.shape)
+        # print(self.grid_state.shape)
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game):
@@ -493,6 +493,6 @@ class GridManager:
         elif self.curr_hit and score_diff > 0:
             reward = score_diff
         elif self.curr_hit:
-            reward = +1
+            reward = 1
 
         return self.grid_state, reward

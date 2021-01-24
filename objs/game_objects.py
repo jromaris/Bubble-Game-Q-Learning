@@ -1,7 +1,7 @@
 from objs.constants import *
 import pygame as pg
 import time
-pg.font.init()
+# pg.font.init()
 
 
 class Game:
@@ -20,7 +20,6 @@ class Game:
 
 		self.restart_msg = self.font.render('Press R to restart', False, BLACK)
 		self.restart_msg_x, self.restart_msg_y, _, _ = self.restart_msg.get_rect(center=DISP_CENTER)
-		# Surface((width, height), flags=0, depth=0, masks=None) -> Surface
 
 	def gameOverScreen(self, grid_manager, background):
 
@@ -64,7 +63,8 @@ class Game:
 		display.blit(self.score_label, (self.score_label_x, DISP_H/2 - 0))
 
 	def updateScore(self):
-		if self.prev_score == self.score: return
+		if self.prev_score == self.score:
+			return
 
 		self.prev_score = self.score
 		self.score_label = self.font.render('Score: {}'.format(self.score), False, BLACK)
@@ -120,94 +120,3 @@ class StateMachine:
 
 	def get_state(self):
 		return self.state
-
-
-class CheatManager:
-
-
-	def __init__(self, grid_manager, gun):
-		self.grid_manager = grid_manager
-		self.gun = gun 
-
-		#----------------------------------- Put you cheat codes here --------------------------------#
-		self.cheats = ['god', 'explosion', 'blue', 'violet', 'green', 'yellow', 'red']
-		self.machines = [StateMachine() for cheat in self.cheats]
-
-	def view(self, event):
-
-		for idx in range(len(self.cheats)):
-			self.check(event, self.cheats[idx], self.machines[idx])
-
-	def check(self, event, cheat, machine):
-
-		if not chr(event.key).isalpha(): return
-
-		char = chr(event.key)
-
-		if machine.get_state() == 'begin':
-			machine.idx = 0
-			if char == cheat[machine.idx]:
-				machine.set('next_key') 
-				machine.idx += 1
-			return
-
-		if machine.get_state() == 'next_key':
-
-			# print('char', char)
-			# print('cheat[{}] = {}'.format(machine.idx, cheat[machine.idx] ))
-			if char == cheat[machine.idx]:
-				machine.idx += 1
-
-				if machine.idx + 1 == len(cheat):
-					machine.set('final_key')
-					
-
-			else: machine.set('begin')
-				
-			return
-
-		if machine.get_state() == 'final_key':
-			if char == cheat[machine.idx]:
-
-				for machine in self.machines:
-					machine.set('begin')
-
-				#-------------------------------- Put cheat functions here --------------------------#
-				if cheat == 'god': self.god_cheat()
-				elif cheat == 'explosion': self.explosion_cheat()
-				elif cheat == 'red': self.red()
-				elif cheat == 'green': self.green()
-				elif cheat == 'yellow': self.yellow()
-				elif cheat == 'blue': self.blue()
-				elif cheat == 'violet': self.violet()
-
-				else: raise ValueError('Cheat function for \'{}\' not called'.format(cheat))
-				#------------------------------------------------------------------------------------#
-
-			else: machine.set('begin')
-
-			return
-
-	#-------------------------------------------------- Put what the cheat function do here -------------------------- #
-
-	def blue(self): self.gun.loaded.color = BLUE
-	def red(self): self.gun.loaded.color = RED
-	def yellow(self): self.gun.loaded.color = YELLOW
-	def green(self): self.gun.loaded.color = GREEN
-	def violet(self): self.gun.loaded.color = VIOLET
-
-	def god_cheat(self):
-		print('Activated God Mode')
-
-		for row in range(self.grid_manager.rows):
-			for col in range(self.grid_manager.cols):
-				if self.grid_manager.grid[row][col].exists:
-					self.grid_manager.grid[row][col].color = self.gun.loaded.color
-
-	def explosion_cheat(self):
-		print('Activated Cheat: Explosion')
-		self.gun.loaded.color = BLACK
-
-	def bubbles_cheat(self):
-		print('bubbles')
-		return

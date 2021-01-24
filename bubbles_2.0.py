@@ -1,21 +1,13 @@
-import time
-import random
-from objs.constants import *
-from objs.bubble_file import *
-from objs.grid_file import *
-from objs.shooter_file import *
-from objs.game_objects import *
-from objs.q_learning import ReplayBuffer, DQN, select_epsilon_greedy_action, train_step
 import pygame as pg
+import random
+from objs.grid_file import GridManager
+from objs.shooter_file import Shooter
+from objs.game_objects import Game, Background
+from objs.q_learning import ReplayBuffer, DQN, select_epsilon_greedy_action, train_step
 import numpy as np
 import tensorflow as tf
-import pprint
-from objs.plotter import gudermannian, genlogistic, genlog_func
-
-TEST = False
-MODELS_PATH = 'new_models'
-
-pg.init()
+from objs.plotter import genlogistic, genlog_func
+from objs.constants import *
 
 
 def reset_game():
@@ -59,9 +51,8 @@ def reset_game():
 	# print("CURR NOK")
 	# print(grid_manager.grid_curr_nok)
 	# Starting mouse position
-	mouse_pos = (DISP_W / 2, DISP_H / 2)
 
-	return game, background, grid_manager, gun, mouse_pos
+	return game, background, grid_manager, gun
 
 
 def handle_game_events():
@@ -85,8 +76,11 @@ def handle_game_events():
 				quit()
 
 
-def train():
-	num_actions = 180 - 30
+def train_logic():
+	pass
+
+
+def train_graphic():
 	num_episodes = 1000
 	epsilon = 1
 	buffer = ReplayBuffer(100000)
@@ -94,22 +88,26 @@ def train():
 	discount = 0.99
 	cur_frame = 0
 
+	gun_fired = True
+
+	# Start training. Play game once and then train with a batch.
+	last_100_ep_rewards = []
+	limit_a, limit_b = 15, 165
+	angle_step = 0.5
+	angles = [i * angle_step for i in range(int(limit_a/angle_step), int(limit_b/angle_step))]
+
+	action = random.randint(0, len(angles)-1)
+	num_actions = len(angles)
+
 	main_nn = DQN(num_actions=num_actions)
 	target_nn = DQN(num_actions=num_actions)
 	optimizer = tf.keras.optimizers.Adam(1e-4)
 	mse = tf.keras.losses.MeanSquaredError()
 
-	gun_fired = True
-
-	# Start training. Play game once and then train with a batch.
-	last_100_ep_rewards = []
-	angles = [i for i in range(15, 165)]
-	action = random.randint(15, 164)
-
 	for episode in range(num_episodes + 1):
 		first = True
 
-		game, background, grid_manager, gun, mouse_pos = reset_game()
+		game, background, grid_manager, gun = reset_game()
 
 		ep_reward, done = 0, False
 		while not done:	 # or won game
@@ -122,11 +120,11 @@ def train():
 
 			# Check collision with bullet and update grid as needed
 			grid_manager.view(gun, game)
-			state_in = tf.expand_dims(state, axis=0)
 
 			if not first:
 				gun_fired = gun.fire()
 				if not gun_fired:
+					state_in = tf.expand_dims(state, axis=0)
 					action = select_epsilon_greedy_action(main_nn, state_in,
 														  genlog_func(epsilon), num_actions)
 					# print('\tAction: ', action)
@@ -138,14 +136,14 @@ def train():
 
 			gun.draw_bullets()  # Draw and update bullet and reloads
 
+			next_state, reward = grid_manager.gameInfo(game)
+			ep_reward += reward
+
 			game.drawScore()  # draw score
 
 			pg.display.update()
+
 			clock.tick(60)  # 60 FPS
-
-			next_state, reward = grid_manager.gameInfo(game)
-
-			ep_reward += reward
 
 			done = game.over 	 # or game.won
 			# Save to experience replay.
@@ -158,7 +156,7 @@ def train():
 
 			# Train neural network.
 			if len(buffer) >= batch_size and not first and not gun_fired:
-				# print('Reward: ', reward)
+				print('Reward: ', reward)
 				states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 				loss = train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
 								states=states, actions=actions, rewards=rewards,
@@ -182,11 +180,14 @@ def train():
 
 
 def test():
-	num_actions = 180 - 30
 
 	main_nn = tf.keras.models.load_model(MODELS_PATH)
-	angles = [i for i in range(15, 165)]
-	action = random.randint(15, 164)
+	limit_a, limit_b = 15, 165
+	angle_step = 0.5
+	angles = [i * angle_step for i in range(int(limit_a/angle_step), int(limit_b/angle_step))]
+
+	action = random.randint(0, len(angles)-1)
+	num_actions = len(angles)
 
 	first = True
 	gun_fired = False
@@ -208,6 +209,7 @@ def test():
 			state_in = tf.expand_dims(state, axis=0)
 			action = select_epsilon_greedy_action(main_nn, state_in,
 												  genlog_func(0), num_actions)
+			print('\tAction: ', action)
 
 		gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
 
@@ -216,16 +218,20 @@ def test():
 		game.drawScore()  # draw score
 
 		pg.display.update()
+
 		clock.tick(60)  # 60 FPS
 
 		done = game.over  # or game.won
 
 
 def main():
-	if TEST:
-		test()
+	if TRAIN_TEST:
+		if TRAIN_TYPE == 'logic':
+			train_logic()
+		elif TRAIN_TYPE == 'graphic':
+			train_graphic()
 	else:
-		train()
+		test()
 
 
 if __name__ == '__main__':

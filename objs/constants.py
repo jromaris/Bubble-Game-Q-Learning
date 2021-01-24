@@ -1,5 +1,6 @@
 import pygame as pg
 
+
 # visualizations
 VISUALIZATIONS = False
 SHOW_COMRADES = False
@@ -16,11 +17,17 @@ BOTTOM_CENTER = (450, 600)
 DISP_CENTER = (DISP_W/2, DISP_H/2)
 
 
-# create display
-display = pg.display.set_mode((DISP_W, DISP_H))
-display_rect = display.get_rect()
-pg.display.set_caption('Bubbles 2.0')
-clock = pg.time.Clock()
+TRAIN_TEST = True
+TRAIN_TYPE = 'graphic'	 # 'graphic' or 'logic'
+MODELS_PATH = 'new_models'
+
+if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+    pg.init()
+    # create display
+    display = pg.display.set_mode((DISP_W, DISP_H))
+    display_rect = display.get_rect()
+    pg.display.set_caption('Bubbles 2.0')
+    clock = pg.time.Clock()
 
 # colours
 BLACK = (0, 0, 0)
@@ -64,5 +71,4 @@ ROOM_WIDTH = DISP_W - (2 * WALL_WIDTH)
 WALL_BOUND_L = WALL_WIDTH
 WALL_BOUND_R = DISP_W - WALL_WIDTH
 WALL_BOUND_FLOOR = DISP_H - FLOOR_HEIGHT
-# WALL_RECT_L = pg.Rect(0,0,WALL_WIDTH,DISP_H)
-# WALL_RECT_R = pg.Rect(WALL_BOUND_R,0,WALL_WIDTH,DISP_H)
+
