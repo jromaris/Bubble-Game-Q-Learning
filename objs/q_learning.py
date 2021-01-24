@@ -75,10 +75,10 @@ class ReplayBuffer(object):
 def select_epsilon_greedy_action(main_nn, state, epsilon, num_actions):
     """Take random action with probability epsilon, else take best action."""
     result = tf.random.uniform((1,))
-    # if result < epsilon:
-        # return random.randint(0, num_actions-1)
-    # else:
-    return tf.argmax(main_nn(state)[0]).numpy()
+    if result < epsilon:
+        return random.randint(0, num_actions-1)
+    else:
+        return tf.argmax(main_nn(state)[0]).numpy()
         # Greedy action for state.
 
 
