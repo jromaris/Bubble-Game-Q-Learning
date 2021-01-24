@@ -23,10 +23,10 @@ def reset_game():
 	gun = Shooter(pos=BOTTOM_CENTER)
 	gun.putInBox()
 
-	print(gun.loaded.color)
-	print(gun.reload1.color)
-	print(gun.reload2.color)
-	print(gun.reload3.color)
+	# print(gun.loaded.color)
+	# print(gun.reload1.color)
+	# print(gun.reload2.color)
+	# print(gun.reload3.color)
 	grid_manager = GridManager()
 	game = Game()
 	# cheat_manager = CheatManager(grid_manager, gun)
@@ -61,12 +61,33 @@ def reset_game():
 	return game, background, grid_manager, gun, mouse_pos
 
 
+def handle_game_events():
+	for event in pg.event.get():
+		if event.type == pg.QUIT:
+			pg.quit()
+			quit()
+
+		# get mouse position
+		if event.type == pg.MOUSEMOTION:
+			pass
+
+		# if you click, fire a bullet
+		if event.type == pg.MOUSEBUTTONDOWN:
+			pass
+
+		if event.type == pg.KEYDOWN:
+			# Ctrl+C to quit
+			if event.key == pg.K_c and pg.key.get_mods() & pg.KMOD_CTRL:
+				pg.quit()
+				quit()
+
+
 def main():
 
 	first = False
 	num_actions = 180 - 30
 	num_episodes = 1000
-	epsilon = 1.0
+	epsilon = 0.96
 	buffer = ReplayBuffer(100000)
 	batch_size = 32
 	discount = 0.99
@@ -90,6 +111,8 @@ def main():
 
 		ep_reward, done = 0, False
 		while not done:	 # or won game
+			handle_game_events()
+
 			state = grid_manager.grid_state
 
 			# Draw BG first
@@ -103,7 +126,7 @@ def main():
 				gun_fired = gun.fire()
 				if not gun_fired:
 					action = select_epsilon_greedy_action(main_nn, state_in, epsilon, num_actions)
-					# print('Action: ', action)
+					# print('\tAction: ', action)
 			else:
 				action = random.randint(0, len(angles) - 1)
 				first = False
@@ -115,10 +138,9 @@ def main():
 			game.drawScore()  # draw score
 
 			pg.display.update()
-			clock.tick(40)  # 60 FPS
+			clock.tick(60)  # 60 FPS
 
 			next_state, reward = grid_manager.gameInfo(game)
-			# next_state = next_state.astype(dtype=np.float32)
 
 			ep_reward += reward
 
@@ -133,16 +155,18 @@ def main():
 
 			# Train neural network.
 			if len(buffer) >= batch_size and not first and not gun_fired:
-				print('Reward: ', reward)
+				# print('Reward: ', reward)
 				states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 				loss = train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
 								states=states, actions=actions, rewards=rewards,
 								next_states=next_states, dones=dones, discount=discount,
 								num_actions=num_actions)
-
+		print('Epsilon: ', epsilon)
 		if episode < 950:
 			epsilon -= 0.001
-
+		elif episode == 998:
+			epsilon = 0.001
+			print('Ante-último')
 		if len(last_100_ep_rewards) == 100:
 			last_100_ep_rewards = last_100_ep_rewards[1:]
 		last_100_ep_rewards.append(ep_reward)
