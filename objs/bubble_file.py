@@ -9,8 +9,10 @@ class Bubble:
 
 	def __init__(self, pos, color=None):
 
-		if color is None: self.color = random.choice(BUBBLE_COLORS)
-		else:			  self.color = color
+		if color is None:
+			self.color = random.choice(BUBBLE_COLORS)
+		else:
+			self.color = color
 
 		self.pos = pos
 		self.radius = BUBBLE_RADIUS
@@ -18,21 +20,22 @@ class Bubble:
 		self.shake_options = [-1, 0, 1]
 
 	def shake(self):
-		if self.color == BG_COLOR: return
+		if self.color == BG_COLOR:
+			return
 
 		x, y = self.pos[0], self.pos[1]
 
 		self.pos = (x + random.choice(self.shake_options), y + random.choice(self.shake_options))
-		self.draw()
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			self.draw()
 		self.pos = (x, y)
 
 	def draw(self):
 
-		if self.color == BG_COLOR: return
+		if self.color == BG_COLOR:
+			return
 
 		x, y = int(self.pos[0]), int(self.pos[1])
-
-		# pg.draw.circle(display, self.color, (x,y), self.radius)
 
 		pg.gfxdraw.filled_circle(display, x, y, BUBBLE_RADIUS, self.color)
 
@@ -66,12 +69,13 @@ class Bullet(Bubble):
 
 			self.pos = (x + self.dx, y + self.dy)
 
-			self.draw()
+			if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+				self.draw()
 
 
 class GridBubble(Bubble):
 
-	def __init__(self, row, col, pos, exists = True, color = None):
+	def __init__(self, row, col, pos, exists=True, color=None):
 
 		super().__init__(pos, color)
 
