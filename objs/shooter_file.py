@@ -7,7 +7,10 @@ import pygame as pg
 
 class Shooter:
 
-	def __init__(self, image='images/gun.png', pos=display_rect.center):
+	def __init__(self, image='images/gun.png', pos=None):
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			pos = display_rect.center
+
 		self.shooter = None
 		self.shooter_rect = None
 		self.shooter_box = None
@@ -20,9 +23,9 @@ class Shooter:
 		# center position of the image
 		self.pos = pos
 		self.pos_x, self.pos_y = pos
-
-		self.initGunImage(image)
-		# self.initCrossHair()
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			self.initGunImage(image)
+			# self.initCrossHair()
 
 		self.angle = 0
 
@@ -96,27 +99,29 @@ class Shooter:
 
 	# Rotates an image and displays it
 	def rotate(self, angle):
-		self.draw_line()
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			self.draw_line()
 
-		# self.crosshair_rect.center = (BOTTOM_CENTER[0] + 150*cos(angle), BOTTOM_CENTER[1] - 150*sin(angle))
-		# display.blit(self.crosshair, self.crosshair_rect)
+			# self.crosshair_rect.center = (BOTTOM_CENTER[0] + 150*cos(angle), BOTTOM_CENTER[1] - 150*sin(angle))
+			# display.blit(self.crosshair, self.crosshair_rect)
 
 		# Get angle of rotation (in degrees)
 		self.angle = angle
 
-		# Get a rotated version of the box to display. Note: don't keep rotating the original as that skews the image
-		rotated_box = pg.transform.rotate(self.shooter_box, self.angle)
-
-		# display the image
-		display.blit(rotated_box, rotated_box.get_rect(center=self.pos))
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			# Get a rotated version of the box to display. Note: don't keep rotating the original as that skews the image
+			rotated_box = pg.transform.rotate(self.shooter_box, self.angle)
+			# display the image
+			display.blit(rotated_box, rotated_box.get_rect(center=self.pos))
 
 	def draw_bullets(self):
 
 		self.fired.update()
-		self.loaded.draw()
-		self.reload1.draw()
-		self.reload2.draw()
-		self.reload3.draw()
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			self.loaded.draw()
+			self.reload1.draw()
+			self.reload2.draw()
+			self.reload3.draw()
 
 	def fire(self):
 		exists = self.fired.exists

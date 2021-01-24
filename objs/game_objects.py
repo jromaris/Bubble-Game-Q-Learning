@@ -1,7 +1,10 @@
 from objs.constants import *
 import pygame as pg
 import time
-# pg.font.init()
+
+
+if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+	pg.font.init()
 
 
 class Game:
@@ -10,16 +13,16 @@ class Game:
 		self.score = 0
 		self.prev_score = self.score
 
-		self.font = pg.font.Font("fonts/pixel.otf", 30)
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			self.font = pg.font.Font("fonts/pixel.otf", 30)
+			self.score_label = self.font.render('Score:{}'.format(self.score), False, BLACK)
+			self.score_label_x, self.score_label_y, _, _ = self.score_label.get_rect(center=DISP_CENTER)
 
-		self.score_label = self.font.render('Score:{}'.format(self.score), False, BLACK)
-		self.score_label_x, self.score_label_y, _, _ = self.score_label.get_rect(center=DISP_CENTER)
+			self.end_msg = self.font.render('You Fucked Up!', False, BLACK)
+			self.end_msg_x, self.end_msg_y, _, _ = self.end_msg.get_rect(center=DISP_CENTER)
 
-		self.end_msg = self.font.render('You Fucked Up!', False, BLACK)
-		self.end_msg_x, self.end_msg_y, _, _ = self.end_msg.get_rect(center=DISP_CENTER)
-
-		self.restart_msg = self.font.render('Press R to restart', False, BLACK)
-		self.restart_msg_x, self.restart_msg_y, _, _ = self.restart_msg.get_rect(center=DISP_CENTER)
+			self.restart_msg = self.font.render('Press R to restart', False, BLACK)
+			self.restart_msg_x, self.restart_msg_y, _, _ = self.restart_msg.get_rect(center=DISP_CENTER)
 
 	def gameOverScreen(self, grid_manager, background):
 
@@ -48,13 +51,11 @@ class Game:
 			pg.display.update()
 			clock.tick(60)
 
-		return
-
 	def drawScore(self):
 
 		self.updateScore()
-
-		display.blit(self.score_label,(WALL_BOUND_L + 20, DISP_H - 40))
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			display.blit(self.score_label,(WALL_BOUND_L + 20, DISP_H - 40))
 
 	def drawGameOver(self):
 
@@ -67,19 +68,21 @@ class Game:
 			return
 
 		self.prev_score = self.score
-		self.score_label = self.font.render('Score: {}'.format(self.score), False, BLACK)
-		self.score_label_x, self.score_label_y, _, _ = self.score_label.get_rect(center = DISP_CENTER)
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			self.score_label = self.font.render('Score: {}'.format(self.score), False, BLACK)
+			self.score_label_x, self.score_label_y, _, _ = self.score_label.get_rect(center=DISP_CENTER)
 
 
 class Background:
 	def __init__(self):
-		self.image = self.getImage()
+		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+			self.image = self.getImage()
 
-		self.wall = pg.Surface((WALL_WIDTH, DISP_H), pg.SRCALPHA, 32)
-		self.wall.fill((122, 122, 122, 122))
+			self.wall = pg.Surface((WALL_WIDTH, DISP_H), pg.SRCALPHA, 32)
+			self.wall.fill((122, 122, 122, 122))
 
-		self.floor = pg.Surface((ROOM_WIDTH, FLOOR_HEIGHT), pg.SRCALPHA, 32)
-		self.floor.fill((200, 0, 0, 90))
+			self.floor = pg.Surface((ROOM_WIDTH, FLOOR_HEIGHT), pg.SRCALPHA, 32)
+			self.floor.fill((200, 0, 0, 90))
 
 	def getImage(self):
 		# Load and draw background image

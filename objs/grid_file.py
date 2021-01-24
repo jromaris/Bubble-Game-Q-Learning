@@ -12,7 +12,8 @@ class GridManager:
     def __init__(self):
         self.curr_hit = False
         self.curr_balls = 0
-        self.myfont = pg.font.SysFont("Comic Sans MS", 7)  # pick a font you have and set its size
+        if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+            self.myfont = pg.font.SysFont("Comic Sans MS", 7)  # pick a font you have and set its size
         self.rows = GRID_ROWS  # Initialize the amount of rows
         self.cols = GRID_COLS  # Initialize the amount if cols
         self.even_offset = True  # Which rows (even or odd) are offset
@@ -89,14 +90,16 @@ class GridManager:
             self.gameInfo(game)
         # No matter what happens, update the grid
         # draws the bubbles, animations, visualizations
-        self.draw()
+        if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+            self.draw()
 
     # Simply checks if the game is over
     def checkGameOver(self, game):
 
         # If the total amount of rows (including non-existent bubbles) is less than the GAMEOVER_ROWS,
         # the game can't possibly be over so return
-        if self.rows < GAMEOVER_ROWS: return
+        if self.rows < GAMEOVER_ROWS:
+            return
 
         # if there is an existing bubble in the row with index GAMEOVER_ROWS-1, the game is over
         # aka if there is a bubble below the red line, the game is over
@@ -181,7 +184,8 @@ class GridManager:
     def updateRows(self):
 
         # after 'APPEND_COUNTDOWN' of collisions, add a row to the top
-        if (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0): self.appendTop()
+        if (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0):
+            self.appendTop()
 
         # if theres an existent bubble in the very last row, add a new row to the bottom
         # A bullet takes the place of a non-existent bubble so there should always be an empty
@@ -276,7 +280,8 @@ class GridManager:
                 for comrade in bubble.getComrades():
                     if comrade.exists and (comrade not in cluster):
                         rooted = self.findRoot(comrade)
-                        if not rooted: cluster.append(comrade)
+                        if not rooted:
+                            cluster.append(comrade)
 
     def findCluster(self, bubble, reached=None):
 
@@ -412,7 +417,8 @@ class GridManager:
                 self.animations.remove(animation)
                 continue
             frame = animation.pop()
-            frame.draw()
+            if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
+                frame.draw()
 
         if SHOW_COMRADES or VISUALIZATIONS:
             for row in range(self.rows):

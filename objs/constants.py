@@ -8,7 +8,7 @@ SHOW_TARGETS = False
 SHOW_HITBOXES = False
 SHOW_ROOT_PATH = False
 
-APPEND_COUNTDOWN = 5
+APPEND_COUNTDOWN = 8
 
 
 DISP_W = 900
@@ -18,7 +18,7 @@ DISP_CENTER = (DISP_W/2, DISP_H/2)
 
 
 TRAIN_TEST = True
-TRAIN_TYPE = 'graphic'	 # 'graphic' or 'logic'
+TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
 MODELS_PATH = 'new_models'
 
 if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
