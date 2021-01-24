@@ -10,7 +10,7 @@ import pygame as pg
 import numpy as np
 import tensorflow as tf
 import pprint
-
+from objs.plotter import gudermannian, genlogistic, genlog_func
 
 pg.init()
 
@@ -83,7 +83,6 @@ def handle_game_events():
 
 
 def main():
-
 	first = False
 	num_actions = 180 - 30
 	num_episodes = 1000
@@ -125,7 +124,8 @@ def main():
 			if not first:
 				gun_fired = gun.fire()
 				if not gun_fired:
-					action = select_epsilon_greedy_action(main_nn, state_in, epsilon, num_actions)
+					action = select_epsilon_greedy_action(main_nn, state_in,
+														  genlog_func(epsilon), num_actions)
 					# print('\tAction: ', action)
 			else:
 				action = random.randint(0, len(angles) - 1)
@@ -161,7 +161,7 @@ def main():
 								states=states, actions=actions, rewards=rewards,
 								next_states=next_states, dones=dones, discount=discount,
 								num_actions=num_actions)
-		print('Epsilon: ', epsilon)
+		print('genlog_func(Epsilon): ', genlog_func(epsilon))
 		if episode < 950:
 			epsilon -= 0.001
 		elif episode == 998:
@@ -177,5 +177,6 @@ def main():
 
 
 if __name__ == '__main__': 
-	while True:
-		main()
+	# while True:
+	# 	main()
+	main()

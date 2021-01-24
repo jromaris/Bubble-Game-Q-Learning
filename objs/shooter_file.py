@@ -8,6 +8,14 @@ import pygame as pg
 class Shooter:
 
 	def __init__(self, image='images/gun.png', pos=display_rect.center):
+		self.shooter = None
+		self.shooter_rect = None
+		self.shooter_box = None
+		self.crosshair = None
+		self.crosshair_rect = None
+
+		self.shooter_w = 0
+		self.shooter_h = 0
 
 		# center position of the image
 		self.pos = pos
