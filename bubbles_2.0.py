@@ -85,7 +85,6 @@ def main():
 	angles = [i for i in range(15, 165)]
 	for episode in range(num_episodes + 1):
 		first = True
-		gun_fired = True
 
 		game, background, grid_manager, gun, mouse_pos = reset_game()
 
@@ -100,23 +99,22 @@ def main():
 			grid_manager.view(gun, game)
 			state_in = tf.expand_dims(state, axis=0)
 
-			if not first and not gun_fired:
-				action = select_epsilon_greedy_action(main_nn, state_in, epsilon, num_actions)
-			else:
-				action = random.randint(0, len(angles)-1)
-			# print('Action: ', action)
-			# print('Angle: ', angles[action])
-			# print('\n')
-			gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
 			if not first:
 				gun_fired = gun.fire()
+				if not gun_fired:
+					action = select_epsilon_greedy_action(main_nn, state_in, epsilon, num_actions)
+			else:
+				action = random.randint(0, len(angles) - 1)
+				first = False
+
+			gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
 
 			gun.draw_bullets()  # Draw and update bullet and reloads
 
 			game.drawScore()  # draw score
 
 			pg.display.update()
-			clock.tick(1)  # 60 FPS
+			clock.tick(60)  # 60 FPS
 
 			next_state, reward = grid_manager.gameInfo(game)
 			# next_state = next_state.astype(dtype=np.float32)
@@ -133,7 +131,7 @@ def main():
 				target_nn.set_weights(main_nn.get_weights())
 
 			# Train neural network.
-			if len(buffer) >= batch_size:
+			if len(buffer) >= batch_size and not first and not gun_fired:
 				states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 				loss = train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
 								states=states, actions=actions, rewards=rewards,

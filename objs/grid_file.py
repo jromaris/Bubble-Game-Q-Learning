@@ -46,7 +46,7 @@ class GridManager:
 		self.prev_time = 0			# used for the paths (root search) animation
 
 		# grids for reinforced learning
-		self.grid_state = np.zeros((GAMEOVER_ROWS+1,GRID_COLS*2+1,4))
+		self.grid_state = np.zeros((GAMEOVER_ROWS+1, GRID_COLS*2+1,4))
 		# grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
 		# grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
 		# grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
@@ -465,7 +465,7 @@ class GridManager:
 		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 		# self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
-		self.grid_state = np.zeros((GAMEOVER_ROWS, GRID_COLS*2+1, 4))
+		self.grid_state = np.zeros((GAMEOVER_ROWS+1, GRID_COLS*2+1, 4))
 		for row in range(self.rows):
 			# print("Row", row)
 			for col in range(self.cols):
