@@ -7,6 +7,7 @@ from objs.shooter_file import *
 from objs.game_objects import *
 from objs.q_learning import ReplayBuffer, DQN, select_epsilon_greedy_action, train_step
 import pygame as pg
+import numpy as np
 import tensorflow as tf
 import pprint
 
@@ -60,14 +61,10 @@ def reset_game():
 	return game, background, grid_manager, gun, mouse_pos
 
 
-def step(game, grid_manager, action):
-	grid_state, reward = grid_manager.gameInfo(game)
-	pass
-
-
 def main():
 
-	num_actions = 14
+	first = False
+	num_actions = 180 - 30
 	num_episodes = 1000
 	epsilon = 1.0
 	buffer = ReplayBuffer(100000)
@@ -80,21 +77,52 @@ def main():
 	optimizer = tf.keras.optimizers.Adam(1e-4)
 	mse = tf.keras.losses.MeanSquaredError()
 
+	first = False
+	gun_fired = True
+
 	# Start training. Play game once and then train with a batch.
 	last_100_ep_rewards = []
+	angles = [i for i in range(15, 165)]
 	for episode in range(num_episodes + 1):
+		first = True
+
 		game, background, grid_manager, gun, mouse_pos = reset_game()
 
 		ep_reward, done = 0, False
-		while not game.over:	 # or won game
+		while not done:	 # or won game
+			state = grid_manager.grid_state
+
+			# Draw BG first
+			background.draw()
+
+			# Check collision with bullet and update grid as needed
+			grid_manager.view(gun, game)
 			state_in = tf.expand_dims(state, axis=0)
-			action = select_epsilon_greedy_action(state_in, epsilon)
 
+			if not first:
+				gun_fired = gun.fire()
+				if not gun_fired:
+					action = select_epsilon_greedy_action(main_nn, state_in, epsilon, num_actions)
+					# print('Action: ', action)
+			else:
+				action = random.randint(0, len(angles) - 1)
+				first = False
 
-			grid_state, reward = grid_manager.gameInfo(game)
-			# next_state, reward, done, info = env.step(action)
+			gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
+
+			gun.draw_bullets()  # Draw and update bullet and reloads
+
+			game.drawScore()  # draw score
+
+			pg.display.update()
+			clock.tick(40)  # 60 FPS
+
+			next_state, reward = grid_manager.gameInfo(game)
+			# next_state = next_state.astype(dtype=np.float32)
 
 			ep_reward += reward
+
+			done = game.over 	 # or game.won
 			# Save to experience replay.
 			buffer.add(state, action, reward, next_state, done)
 			state = next_state
@@ -104,9 +132,13 @@ def main():
 				target_nn.set_weights(main_nn.get_weights())
 
 			# Train neural network.
-			if len(buffer) >= batch_size:
+			if len(buffer) >= batch_size and not first and not gun_fired:
+				print('Reward: ', reward)
 				states, actions, rewards, next_states, dones = buffer.sample(batch_size)
-				loss = train_step(states, actions, rewards, next_states, dones)
+				loss = train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
+								states=states, actions=actions, rewards=rewards,
+								next_states=next_states, dones=dones, discount=discount,
+								num_actions=num_actions)
 
 		if episode < 950:
 			epsilon -= 0.001
@@ -118,54 +150,6 @@ def main():
 		if episode % 50 == 0:
 			print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
 				  f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
-
-	# env.close()
-
-
-	# pretty self-explanatory
-	while not game.over:		
-
-		# quit when you press the x
-		for event in pg.event.get():
-			if event.type == pg.QUIT:
-				pg.quit()
-				quit()
-
-			# get mouse position
-			if event.type == pg.MOUSEMOTION:
-				mouse_pos = pg.mouse.get_pos()
-				
-			# if you click, fire a bullet
-			if event.type == pg.MOUSEBUTTONDOWN:
-				gun.fire()
-			
-			if event.type == pg.KEYDOWN:
-				# cheat_manager.view(event) # if a key is pressed, the cheat manager should know about it
-
-				# Ctrl+C to quit
-				if event.key == pg.K_c and pg.key.get_mods() & pg.KMOD_CTRL:
-					pg.quit()
-					quit()
-
-		# Draw BG first
-		background.draw()
-
-		# Check collision with bullet and update grid as needed
-		grid_manager.view(gun, game)
-
-		# ACA IRIA LA PARTE DE LA RED NEURONAL
-		# print(grid_manager.grid[0][0].__dict__)
-
-		gun.rotate(mouse_pos)			# Rotate the gun if the mouse is moved
-		gun.draw_bullets()				# Draw and update bullet and reloads
-
-		game.drawScore()				# draw score
-
-		pg.display.update()
-		clock.tick(60)					# 60 FPS
-
-		# print(gun.angle)
-	game.gameOverScreen(grid_manager, background)
 
 
 if __name__ == '__main__': 
