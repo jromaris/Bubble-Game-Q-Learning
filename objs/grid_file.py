@@ -17,8 +17,8 @@ class GridManager:
 		self.even_offset = True		# Which rows (even or odd) are offset
 
 		# this will contain the bubbles that will be checked for collisions
-		self.targets = []			
-		
+		self.targets = []
+
 		# Initialize the grid
 		self.grid = [[0 for col in range(self.cols)] for row in range(self.rows)]
 
@@ -37,7 +37,7 @@ class GridManager:
 				self.findComrades(self.grid[row][col])
 
 		# Add a row blank bubbles. The bullet will take the place of one of these bubbles
-		self.appendBottom()			
+		self.appendBottom()
 		self.findTargets()			# Find the targets that will be checked for collisions
 		self.collided = False		# There have been no collisions yet
 		self.collision_counter = 0	# How many collisions there have been. Used to determine when to add a new row to top
@@ -46,7 +46,7 @@ class GridManager:
 		self.prev_time = 0			# used for the paths (root search) animation
 
 		# grids for reinforced learning
-		self.grid_state = np.zeros((GAMEOVER_ROWS+1,GRID_COLS*2+1,4))
+		self.grid_state = np.zeros((GAMEOVER_ROWS+1, GRID_COLS*2+1,4))
 		# grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
 		# grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
 		# grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
@@ -65,12 +65,12 @@ class GridManager:
 		# if a bullet has been fired, check for collisions, pretty simple
 		if gun.fired.exists:
 			self.checkCollision(gun.fired)
-		
+
 		# if there's been a collision, we gotta update the grid
-		if self.collided: 
+		if self.collided:
 			self.collision_counter += 1
 			bubble = self.reviveBubble(gun.fired)
-			
+
 			# Check if the new bubble has any adjacent bubble of the same color
 			for b in bubble.getComrades():
 				if bubble.color == b.color:
@@ -93,7 +93,7 @@ class GridManager:
 	# Simply checks if the game is over
 	def checkGameOver(self, game):
 
-		# If the total amount of rows (including non-existent bubbles) is less than the GAMEOVER_ROWS, 
+		# If the total amount of rows (including non-existent bubbles) is less than the GAMEOVER_ROWS,
 		# the game can't possibly be over so return
 		if self.rows < GAMEOVER_ROWS: return
 
@@ -102,7 +102,7 @@ class GridManager:
 		for col in range(self.cols):
 			if self.grid[GAMEOVER_ROWS - 1][col].exists:
 				game.over = True
-				return	
+				return
 
 
 	def checkCollision(self, bullet):
@@ -124,9 +124,9 @@ class GridManager:
 			D = target_y + (HITBOX_SIZE/2)
 
 			# Check if the bullet is within the hitbox
-			if (bullet_y - (HITBOX_SIZE/2)) < D:		
-				if (bullet_x + (HITBOX_SIZE/2)) > L:	
-					if (bullet_x - (HITBOX_SIZE/2)) < R:			
+			if (bullet_y - (HITBOX_SIZE/2)) < D:
+				if (bullet_x + (HITBOX_SIZE/2)) > L:
+					if (bullet_x - (HITBOX_SIZE/2)) < R:
 						if (bullet_y + (HITBOX_SIZE/2)) > U:
 
 							# If the bullet is within the hitbox, destroy it
@@ -138,7 +138,7 @@ class GridManager:
 							# NOTE: theres another function that revives a bubble
 
 		# if the bullet goes over the top of the screen, it counts a collision
-		if bullet_y - BUBBLE_RADIUS < 0: 
+		if bullet_y - BUBBLE_RADIUS < 0:
 			bullet.exists = False
 			self.collided = True
 
@@ -199,7 +199,7 @@ class GridManager:
 
 		self.deleteBottom()
 
-	# simple function to add to the top 
+	# simple function to add to the top
 	def appendTop(self):
 
 		# add one to the row of every bubble that is already on the grid
@@ -227,7 +227,7 @@ class GridManager:
 				self.grid[row][col].pos = GridManager.calcPos(row, col, self.even_offset)
 				# the bubbles are connected to other bubble objects, so we don't need to calc the comrades of every bubble
 				# we only need to reset the comrades of the bubbles of the first two rows
-				if (row == 0) or (row == 1): self.findComrades(self.grid[row][col])	
+				if (row == 0) or (row == 1): self.findComrades(self.grid[row][col])
 
 	# a simple function to add to the bottom
 	def appendBottom(self):
@@ -267,7 +267,7 @@ class GridManager:
 		# get a list of all the bubbles of the same color using dept first search
 		cluster = self.findCluster(bubble)
 
-		if (len(cluster) >= 3) or (bubble.color == BLACK):			
+		if (len(cluster) >= 3) or (bubble.color == BLACK):
 			while len(cluster) > 0:
 				bubble = cluster.pop()
 
@@ -283,7 +283,7 @@ class GridManager:
 
 
 	def findCluster(self, bubble, reached = None):
-		
+
 		if reached == None: reached = []
 
 		for comrade in bubble.getComrades():
@@ -298,7 +298,8 @@ class GridManager:
 
 		# print('row, col = ({}, {})'.format(bubble.row, bubble.col))
 
-		if reached == None:	reached = []
+		if reached == None:
+			reached = []
 
 		if bubble.row == 0:
 			self.paths.append(reached)
@@ -309,12 +310,11 @@ class GridManager:
 				reached.append(comrade)
 
 				rooted = self.findRoot(comrade, reached)
-				if rooted:	return True
-
-
+				if rooted:
+					return True
 
 		return rooted
-		
+
 
 	def findComrades(self, bubble):
 		bubble.L = None
@@ -328,10 +328,12 @@ class GridManager:
 		row = bubble.row
 		col = bubble.col
 
-		if col > 0: bubble.L = self.grid[row][col - 1]
-		if col < (self.cols - 1): bubble.R = self.grid[row][col + 1]
-		
-		if not ((row % 2) == even_offset):  
+		if col > 0:
+			bubble.L = self.grid[row][col - 1]
+		if col < (self.cols - 1):
+			bubble.R = self.grid[row][col + 1]
+
+		if not ((row % 2) == even_offset):
 			if row > 0:
 				bubble.UL = self.grid[row - 1][col]
 
@@ -363,7 +365,7 @@ class GridManager:
 		for comrade in bubble.getComrades():
 			self.findComrades(comrade)
 
-			
+
 	def findTargets(self):
 		self.targets = []
 
@@ -383,10 +385,10 @@ class GridManager:
 
 		x = (col * ((ROOM_WIDTH - BUBBLE_RADIUS) / (GRID_COLS))) + WALL_BOUND_L + BUBBLE_RADIUS
 
-		if not ((row % 2) == even_offset): 
+		if not ((row % 2) == even_offset):
 			x += BUBBLE_RADIUS
 
-		y = BUBBLE_RADIUS + (row * BUBBLE_RADIUS * 2) 
+		y = BUBBLE_RADIUS + (row * BUBBLE_RADIUS * 2)
 
 		return (x,y)
 
@@ -405,14 +407,14 @@ class GridManager:
 				label = self.myfont.render(str(row)+str(col), True, (0, 0, 0))
 				# put the label object on the screen at point x=100, y=100
 				display.blit(label, self.grid[row][col].pos)
-		
+
 		for row in range(len(self.grid_state)):
 			for col in  range(len(self.grid_state[0])):
 				if self.grid_state[row][col][0]:
 					pg.draw.circle(display, BLACK, (135+col*16.25-8.125, 15+30*row), 1)
 
 		for animation in self.animations:
-			if not animation: 
+			if not animation:
 				self.animations.remove(animation)
 				continue
 			frame = animation.pop()
@@ -463,7 +465,7 @@ class GridManager:
 		# self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 		# self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
-		self.grid_state = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1,4))
+		self.grid_state = np.zeros((GAMEOVER_ROWS+1, GRID_COLS*2+1, 4))
 		for row in range(self.rows):
 			# print("Row", row)
 			for col in range(self.cols):
@@ -494,10 +496,11 @@ class GridManager:
 			reward = -6000
 		# elif ganaste: reward = 6000
 		elif not self.curr_hit:
-			reward = -self.curr_balls
+			reward = -self.curr_balls + 200
+			# reward = -1
 		elif self.curr_hit:
-			reward = -self.curr_balls
+			# reward = 1
+			reward = -self.curr_balls + 200
 
-		print("Tu reward es", reward)
 		return self.grid_state, reward
 
