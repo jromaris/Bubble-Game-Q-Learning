@@ -15,9 +15,16 @@ def gudermannian():
     plt.show()
 
 
-def genlog_func(t):
+def genlog_func(t, epsilon_params):
     t = 5*t - 1.5
-    a, k, b, q, v, m, c = 0, 1, 1.5, 0.5, 0.12, 0, 1
+    a = epsilon_params['a']
+    k = epsilon_params['k']
+    b = epsilon_params['b']
+    q = epsilon_params['q']
+    v = epsilon_params['v']
+    m = epsilon_params['m']
+    c = epsilon_params['c']
+    # a, k, b, q, v, m, c = 0, 1, 1.5, 0.5, 0.12, 0, 1
     y = a + (k - a) / (c + q * exp(-b*t))**(1/v)
     return y
 

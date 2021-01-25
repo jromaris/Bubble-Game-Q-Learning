@@ -489,16 +489,16 @@ class GridManager:
                     self.grid_state[row][int((((currX - 150) / (16.125))) + 2)][3] = 1
 
     # Return nextState and reward for current action
-    def gameInfo(self, game):
+    def gameInfo(self, game, reward_params):
         score_diff = game.score - game.prev_score
         reward = 0
         if game.over:
-            reward = -200
+            reward = reward_params['game over']
         elif not self.curr_hit:
-            reward = -2
+            reward = reward_params['no hit']
         elif self.curr_hit and score_diff > 0:
             reward = score_diff
         elif self.curr_hit:
-            reward = 1
+            reward = reward_params['hit']
 
         return self.grid_state, reward
