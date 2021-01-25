@@ -17,8 +17,8 @@ BOTTOM_CENTER = (450, 600)
 DISP_CENTER = (DISP_W/2, DISP_H/2)
 
 
-TRAIN_TEST = False
-TRAIN_TYPE = 'graphic'	 # 'graphic' or 'logic'
+TRAIN_TEST = True
+TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
 MODELS_PATH = 'drive/Shareddrives/Redes/Models'
 
 if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):

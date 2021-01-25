@@ -87,7 +87,7 @@ def train_logic():
 	epsilon = 1
 	buffer = ReplayBuffer(100000)
 	batch_size = 32
-	discount = 0.99
+	discount = 0.85
 	cur_frame = 0
 
 	gun_fired = True
