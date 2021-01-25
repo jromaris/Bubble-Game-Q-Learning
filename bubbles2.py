@@ -10,7 +10,7 @@ from objs.plotter import genlogistic, genlog_func
 from objs.constants import *
 
 
-def reset_game():
+def reset_game(reward_paras):
     # Create background
     if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
         background = Background()
@@ -27,7 +27,7 @@ def reset_game():
     game = Game()
     # cheat_manager = CheatManager(grid_manager, gun)
     # Check collision with bullet and update grid as needed
-    grid_manager.view(gun, game, reward_params)
+    grid_manager.view(gun, game, reward_paras)
 
     return game, background, grid_manager, gun
 
@@ -55,7 +55,7 @@ def handle_game_events():
 
 # reward_params : {'game over': -200, 'no hit': -2, 'hit': 1}
 # epsilon_params : {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
-def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92):
+def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92):
 
     epsilon = 1
     buffer = ReplayBuffer(num_episodes+1)
@@ -81,7 +81,7 @@ def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32,
     for episode in range(num_episodes):
         first = True
 
-        game, _, grid_manager, gun = reset_game()
+        game, _, grid_manager, gun = reset_game(reward_paras)
 
         ep_reward, done = 0, False
         while not done:  # or won game
@@ -91,14 +91,14 @@ def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32,
             state = grid_manager.grid_state
 
             # Check collision with bullet and update grid as needed
-            grid_manager.view(gun, game, reward_params)
+            grid_manager.view(gun, game, reward_paras)
 
             if not first:
                 gun_fired = gun.fire()
                 if not gun_fired:
                     state_in = tf.expand_dims(state, axis=0)
                     action = select_epsilon_greedy_action(main_nn, state_in,
-                                                          genlog_func(epsilon, epsilon_params), num_actions)
+                                                          genlog_func(epsilon, epsilon_paras), num_actions)
             # print('\tAction: ', action)
             else:
                 action = random.randint(0, len(angles) - 1)
@@ -108,7 +108,7 @@ def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32,
 
             gun.draw_bullets()  # Draw and update bullet and reloads
 
-            next_state, reward = grid_manager.gameInfo(game, reward_params)
+            next_state, reward = grid_manager.gameInfo(game, reward_paras)
             ep_reward += reward
 
             game.drawScore()  # draw score
@@ -132,7 +132,7 @@ def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32,
                            num_actions=num_actions)
 
         print(f'Episode {episode}/{num_episodes}')
-        print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_params))
+        print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
         epsilon -= 0.001
 
         if len(last_100_ep_rewards) == 100:
@@ -174,7 +174,7 @@ def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32,
     for episode in range(num_episodes):
         first = True
 
-        game, background, grid_manager, gun = reset_game()
+        game, background, grid_manager, gun = reset_game(reward_paras)
 
         ep_reward, done = 0, False
         while not done:  # or won game
@@ -257,7 +257,7 @@ def test(reward_paras):
     first = True
     gun_fired = True
 
-    game, background, grid_manager, gun = reset_game()
+    game, background, grid_manager, gun = reset_game(reward_paras)
 
     ep_reward, done = 0, False
     while not done:  # or won game
