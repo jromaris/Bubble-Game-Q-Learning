@@ -17,8 +17,8 @@ BOTTOM_CENTER = (450, 600)
 DISP_CENTER = (DISP_W/2, DISP_H/2)
 
 
-TRAIN_TEST = True
-TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
+TRAIN_TEST = False
+TRAIN_TYPE = 'graphic'	 # 'graphic' or 'logic'
 MODELS_PATH = 'new_models'
 
 if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):

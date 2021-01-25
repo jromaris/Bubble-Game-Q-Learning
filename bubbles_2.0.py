@@ -3,12 +3,13 @@ import random
 from objs.grid_file import GridManager
 from objs.shooter_file import Shooter
 from objs.game_objects import Game, Background
-from objs.q_learning import ReplayBuffer, DQN, select_epsilon_greedy_action, train_step
+from objs.q_learning import ReplayBuffer, DQN, select_epsilon_greedy_action, train_step, do_trained_action
 import numpy as np
 import tensorflow as tf
 from objs.plotter import genlogistic, genlog_func
 from objs.constants import *
 
+BOTTOM_CENTER = (450, 600)
 
 def reset_game():
 	# Create background
@@ -19,6 +20,7 @@ def reset_game():
 
 	# Initialize gun, position at bottom center of the screen
 	gun = Shooter(pos=BOTTOM_CENTER)
+	print(BOTTOM_CENTER)
 	if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
 		gun.putInBox()
 
@@ -276,7 +278,7 @@ def train_graphic():
 
 def test():
 
-	main_nn = tf.keras.models.load_model(MODELS_PATH)
+	main_nn = tf.keras.models.load_model(MODELS_PATH, compile = False)
 	limit_a, limit_b = 15, 165
 	angle_step = 0.5
 	angles = [i * angle_step for i in range(int(limit_a/angle_step), int(limit_b/angle_step))]
@@ -285,26 +287,29 @@ def test():
 	num_actions = len(angles)
 
 	first = True
-	gun_fired = False
+	gun_fired = True
 
-	game, background, grid_manager, gun, mouse_pos = reset_game()
+	game, background, grid_manager, gun = reset_game()
 
 	ep_reward, done = 0, False
 	while not done:  # or won game
 		handle_game_events()
 
+		state = grid_manager.grid_state
+
 		background.draw()
 
-		state = grid_manager.grid_state
 		grid_manager.view(gun, game)
 
 		if not first:
 			gun_fired = gun.fire()
-		if not gun_fired:
-			state_in = tf.expand_dims(state, axis=0)
-			action = select_epsilon_greedy_action(main_nn, state_in,
-												  genlog_func(0), num_actions)
-			print('\tAction: ', action)
+			if not gun_fired:
+				state_in = tf.expand_dims(state, axis=0)
+				action = do_trained_action(main_nn, state_in)
+				print('\tAction: ', action)
+		else:
+				action = random.randint(0, len(angles) - 1)
+				first = False
 
 		gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
 
@@ -314,7 +319,7 @@ def test():
 
 		pg.display.update()
 
-		clock.tick(60)  # 60 FPS
+		clock.tick(20)  # 60 FPS
 
 		done = game.over  # or game.won
 
@@ -327,7 +332,6 @@ def main():
 			train_graphic()
 	else:
 		test()
-
 
 if __name__ == '__main__':
 	main()
