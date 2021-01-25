@@ -17,7 +17,7 @@ def gudermannian():
 
 def genlog_func(t):
     t = 5*t - 1.5
-    a, k, b, q, v, m, c = 0, 1, 1.5, 0.5, 0.08, 0, 1
+    a, k, b, q, v, m, c = 0, 1, 1.5, 0.5, 0.12, 0, 1
     y = a + (k - a) / (c + q * exp(-b*t))**(1/v)
     return y
 
