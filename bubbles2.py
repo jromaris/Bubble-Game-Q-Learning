@@ -27,7 +27,7 @@ def reset_game():
     game = Game()
     # cheat_manager = CheatManager(grid_manager, gun)
     # Check collision with bullet and update grid as needed
-    grid_manager.view(gun, game)
+    grid_manager.view(gun, game, reward_params)
 
     return game, background, grid_manager, gun
 
@@ -91,7 +91,7 @@ def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32,
             state = grid_manager.grid_state
 
             # Check collision with bullet and update grid as needed
-            grid_manager.view(gun, game)
+            grid_manager.view(gun, game, reward_params)
 
             if not first:
                 gun_fired = gun.fire()
@@ -186,7 +186,7 @@ def train_graphic(epsilon_params, reward_params, num_episodes=1000, batch_size=3
             background.draw()
 
             # Check collision with bullet and update grid as needed
-            grid_manager.view(gun, game)
+            grid_manager.view(gun, game, reward_params)
 
             if not first:
                 gun_fired = gun.fire()
@@ -267,7 +267,7 @@ def test():
 
         background.draw()
 
-        grid_manager.view(gun, game)
+        grid_manager.view(gun, game, reward_params)
 
         if not first:
             gun_fired = gun.fire()
