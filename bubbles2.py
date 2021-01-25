@@ -277,7 +277,7 @@ def train_graphic():
 
 def test():
 
-	main_nn = tf.keras.models.load_model(MODELS_PATH, compile = False)
+	main_nn = tf.keras.models.load_model(MODELS_PATH, compile=False)
 	limit_a, limit_b = 15, 165
 	angle_step = 0.5
 	angles = [i * angle_step for i in range(int(limit_a/angle_step), int(limit_b/angle_step))]
@@ -307,8 +307,8 @@ def test():
 				action = do_trained_action(main_nn, state_in)
 				print('\tAction: ', action)
 		else:
-				action = random.randint(0, len(angles) - 1)
-				first = False
+			action = random.randint(0, len(angles) - 1)
+			first = False
 
 		gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
 
@@ -331,6 +331,7 @@ def main():
 			train_graphic()
 	else:
 		test()
+
 
 if __name__ == '__main__':
 	main()
