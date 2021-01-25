@@ -55,7 +55,7 @@ def handle_game_events():
 
 # reward_params : {'game over': -200, 'no hit': -2, 'hit': 1}
 # epsilon_params : {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
-def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92):
+def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92, model_n=0):
 
     epsilon = 1
     buffer = ReplayBuffer(num_episodes+1)
@@ -143,13 +143,13 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
             print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
 
-    main_nn.save(MODELS_PATH)
+    main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
 
 
 # reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
 # epsilon_params = {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
-def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92):
+def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92, model_n=0):
     epsilon = 1
     buffer = ReplayBuffer(num_episodes+1)
     cur_frame = 0
@@ -241,7 +241,7 @@ def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32,
             print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
 
-    main_nn.save(MODELS_PATH)
+    main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
 
 
@@ -292,14 +292,15 @@ def test(reward_paras):
         done = game.over  # or game.won
 
 
-def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92):
+def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, mod_n=0):
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
         if TRAIN_TYPE == 'logic':
-            train_logic(epsilon_pars, reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount)
+            train_logic(epsilon_pars, reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
+                        model_n=mod_n)
         elif TRAIN_TYPE == 'graphic':
-            train_graphic(epsilon_pars, reward_pars,
-                          num_episodes=num_episodes, batch_size=batch_size, discount=discount)
+            train_graphic(epsilon_pars, reward_pars, num_episodes=num_episodes,
+                          batch_size=batch_size, discount=discount, model_n=mod_n)
     else:
         test(reward_pars)
 
