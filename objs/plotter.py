@@ -29,9 +29,9 @@ def genlog_func(t, epsilon_params):
     return y
 
 
-def genlogistic():
+def genlogistic(epsilon_params):
 
     xs = [x/1000 for x in range(0, 1001)]
-    results = np.array([genlog_func(x) for x in xs])
+    results = np.array([genlog_func(x, epsilon_params) for x in xs])
     plt.plot(results)
     plt.show()

@@ -62,7 +62,7 @@ class GridManager:
         # print(self.grid_state.shape)
 
     # This is the main function of the manager, it handles the main logic of the grid
-    def view(self, gun, game):
+    def view(self, gun, game, reward_params):
 
         # if a bullet has been fired, check for collisions, pretty simple
         if gun.fired.exists:
@@ -87,7 +87,7 @@ class GridManager:
             self.checkGameOver(game)
             self.collided = False
             self.learnGrid(gun.loaded.color, gun.reload1.color)
-            self.gameInfo(game)
+            self.gameInfo(game, reward_params)
         # No matter what happens, update the grid
         # draws the bubbles, animations, visualizations
         if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
