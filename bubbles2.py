@@ -277,7 +277,7 @@ def train_graphic():
 
 def test():
 
-	main_nn = tf.keras.models.load_model(MODELS_PATH, compile=False)
+	main_nn = tf.keras.models.load_model('models', compile=False)
 	limit_a, limit_b = 15, 165
 	angle_step = 0.5
 	angles = [i * angle_step for i in range(int(limit_a/angle_step), int(limit_b/angle_step))]

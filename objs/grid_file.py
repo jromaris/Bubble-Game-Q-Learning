@@ -493,7 +493,7 @@ class GridManager:
         score_diff = game.score - game.prev_score
         reward = 0
         if game.over:
-            reward = -700
+            reward = -200
         elif not self.curr_hit:
             reward = -2
         elif self.curr_hit and score_diff > 0:
