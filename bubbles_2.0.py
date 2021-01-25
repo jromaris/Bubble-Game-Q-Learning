@@ -9,7 +9,6 @@ import tensorflow as tf
 from objs.plotter import genlogistic, genlog_func
 from objs.constants import *
 
-BOTTOM_CENTER = (450, 600)
 
 def reset_game():
 	# Create background
