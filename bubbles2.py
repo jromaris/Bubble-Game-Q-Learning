@@ -149,7 +149,7 @@ def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32,
 
 # reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
 # epsilon_params = {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
-def train_graphic(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92):
+def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92):
     epsilon = 1
     buffer = ReplayBuffer(num_episodes+1)
     cur_frame = 0
@@ -186,14 +186,14 @@ def train_graphic(epsilon_params, reward_params, num_episodes=1000, batch_size=3
             background.draw()
 
             # Check collision with bullet and update grid as needed
-            grid_manager.view(gun, game, reward_params)
+            grid_manager.view(gun, game, reward_paras)
 
             if not first:
                 gun_fired = gun.fire()
                 if not gun_fired:
                     state_in = tf.expand_dims(state, axis=0)
                     action = select_epsilon_greedy_action(main_nn, state_in,
-                                                          genlog_func(epsilon, epsilon_params), num_actions)
+                                                          genlog_func(epsilon, epsilon_paras), num_actions)
                 # print('\tAction: ', action)
             else:
                 action = random.randint(0, len(angles) - 1)
@@ -203,7 +203,7 @@ def train_graphic(epsilon_params, reward_params, num_episodes=1000, batch_size=3
 
             gun.draw_bullets()  # Draw and update bullet and reloads
 
-            next_state, reward = grid_manager.gameInfo(game, reward_params)
+            next_state, reward = grid_manager.gameInfo(game, reward_paras)
             ep_reward += reward
 
             game.drawScore()  # draw score
@@ -230,7 +230,7 @@ def train_graphic(epsilon_params, reward_params, num_episodes=1000, batch_size=3
                                   next_states=next_states, dones=dones, discount=discount,
                                   num_actions=num_actions)
 
-        print('genlog_func(Epsilon): ', genlog_func(epsilon, epsilon_params))
+        print('genlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
         epsilon -= 0.001
 
         if len(last_100_ep_rewards) == 100:
@@ -245,7 +245,7 @@ def train_graphic(epsilon_params, reward_params, num_episodes=1000, batch_size=3
     del main_nn
 
 
-def test():
+def test(reward_paras):
     main_nn = tf.keras.models.load_model('models', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
@@ -267,7 +267,7 @@ def test():
 
         background.draw()
 
-        grid_manager.view(gun, game, reward_params)
+        grid_manager.view(gun, game, reward_paras)
 
         if not first:
             gun_fired = gun.fire()
@@ -300,7 +300,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         elif TRAIN_TYPE == 'graphic':
             train_graphic(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92)
     else:
-        test()
+        test(reward_pars)
 
 
 if __name__ == '__main__':
