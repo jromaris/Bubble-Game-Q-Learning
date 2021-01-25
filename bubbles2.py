@@ -147,8 +147,8 @@ def train_logic(epsilon_params, reward_params, num_episodes=1000, batch_size=32,
     del main_nn
 
 
-# reward_params : {'game over': -200, 'no hit': -2, 'hit': 1}
-# epsilon_params : {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
+# reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
+# epsilon_params = {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
 def train_graphic(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92):
     epsilon = 1
     buffer = ReplayBuffer(num_episodes+1)
@@ -292,15 +292,17 @@ def test():
         done = game.over  # or game.won
 
 
-def main():
+def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92):
     if TRAIN_TEST:
         if TRAIN_TYPE == 'logic':
-            train_logic()
+            train_logic(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92)
         elif TRAIN_TYPE == 'graphic':
-            train_graphic()
+            train_graphic(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92)
     else:
         test()
 
 
 if __name__ == '__main__':
-    main()
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
+    epsilon_params = {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
