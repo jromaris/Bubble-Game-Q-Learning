@@ -12,14 +12,14 @@ APPEND_COUNTDOWN = 5
 
 
 DISP_W = 900
-DISP_H = 700
-BOTTOM_CENTER = (450,700)
+DISP_H = 600
+BOTTOM_CENTER = (450, 600)
 DISP_CENTER = (DISP_W/2, DISP_H/2)
 
 
-TRAIN_TEST = False
-TRAIN_TYPE = 'graphic'	 # 'graphic' or 'logic'
-MODELS_PATH = 'new_models'
+TRAIN_TEST = True
+TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
+MODELS_PATH = 'content/drive/Shareddrives/Redes/Models'
 
 if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
     pg.init()
