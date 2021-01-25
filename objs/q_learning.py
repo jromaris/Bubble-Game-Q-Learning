@@ -79,6 +79,11 @@ def select_epsilon_greedy_action(main_nn, state, epsilon, num_actions):
         return tf.argmax(main_nn(state)[0]).numpy()
         # Greedy action for state.
 
+def do_trained_action(main_nn, state):
+    """Take random action with probability epsilon, else take best action."""
+    return tf.argmax(main_nn(state)[0]).numpy()
+        # Greedy action for state.
+
 
 @tf.function
 def train_step(main_nn, target_nn, mse, optimizer, states, actions,
