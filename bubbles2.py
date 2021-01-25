@@ -296,9 +296,10 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
         if TRAIN_TYPE == 'logic':
-            train_logic(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92)
+            train_logic(epsilon_pars, reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount)
         elif TRAIN_TYPE == 'graphic':
-            train_graphic(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92)
+            train_graphic(epsilon_pars, reward_pars,
+                          num_episodes=num_episodes, batch_size=batch_size, discount=discount)
     else:
         test(reward_pars)
 
