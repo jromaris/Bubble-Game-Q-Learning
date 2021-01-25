@@ -8,8 +8,6 @@ import pygame as pg
 class Shooter:
 
 	def __init__(self, image='images/gun.png', pos=None):
-		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
-			pos = display_rect.center
 
 		self.shooter = None
 		self.shooter_rect = None
