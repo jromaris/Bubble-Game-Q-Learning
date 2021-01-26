@@ -25,7 +25,10 @@ def genlog_func(t, epsilon_params):
     m = epsilon_params['m']
     c = epsilon_params['c']
     # a, k, b, q, v, m, c = 0, 1, 1.5, 0.5, 0.12, 0, 1
-    y = a + (k - a) / (c + q * exp(-b*t))**(1/v)
+    if epsilon_params['constant'][0]:
+        y = epsilon_params['constant'][1]
+    else:
+        y = a + (k - a) / (c + q * exp(-b*t))**(1/v)
     return y
 
 
