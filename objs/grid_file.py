@@ -23,7 +23,8 @@ class GridManager:
 
         # Initialize the grid
         self.grid = [[0 for col in range(self.cols)] for row in range(self.rows)]
-
+        self.color_translation = {BLACK: 0, LIGHT_GRAY: 2, DARK_GRAY: 4, WHITE: 6, RED: 8,
+                                  GREEN: 10, BLUE: 12, ORANGE: 14, YELLOW: 16, VIOLET: 18}
         # Put bubbles in the grid
         for row in range(self.rows):
             for col in range(self.cols):
@@ -48,7 +49,7 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 3))
+        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 1))
         # grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
         # grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
         # grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
@@ -461,13 +462,8 @@ class GridManager:
 
     def learnGrid(self, currBall, nextBall):
         self.curr_balls = 0
-        # self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-        # self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-        # self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-        # self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
-        #AGREGAR FILAS Y EN EL INIT!!
-        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 3))
+        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 1))
         for row in range(self.rows):
 
             for col in range(self.cols):
@@ -476,15 +472,14 @@ class GridManager:
 
                 currColor = self.grid[row][col].color
 
-                for i in range(3):
-                    if currColor != BG_COLOR:
-                        self.grid_state[row][int((((currX - 150) / (16.125))) + 1)][i] = currColor[i]
-                    else:
-                        currColor = BLACK
-                        self.grid_state[row][int((((currX - 150) / (16.125))) + 1)][i] = currColor[i]
+                if currColor != BG_COLOR:
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
+                else:
+                    currColor = BLACK
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
 
-                    self.grid_state[-1][int((((currX - 150) / (16.125))) + 1)][i] = nextBall[i]
-                    self.grid_state[-2][int((((currX - 150) / (16.125))) + 1)][i] = currBall[i]
+                self.grid_state[-1][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[nextBall]
+                self.grid_state[-2][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currBall]
 
 
     # Return nextState and reward for current action
