@@ -109,7 +109,6 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
             gun.draw_bullets()  # Draw and update bullet and reloads
 
             next_state, reward = grid_manager.gameInfo(game, reward_paras)
-            ep_reward += reward
 
             game.drawScore()  # draw score
 
@@ -124,7 +123,11 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
             # Train neural network.
             if len(buffer) >= batch_size and not first and not gun_fired:
+                ep_reward += reward
+
                 # print('Reward: ', reward)
+                # print('Episode Reward: ', ep_reward)
+
                 states, actions, rewards, next_states, dones = buffer.sample(batch_size)
                 train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
                            states=states, actions=actions, rewards=rewards,
@@ -204,7 +207,6 @@ def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32,
             gun.draw_bullets()  # Draw and update bullet and reloads
 
             next_state, reward = grid_manager.gameInfo(game, reward_paras)
-            ep_reward += reward
 
             game.drawScore()  # draw score
 
@@ -223,7 +225,10 @@ def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32,
 
             # Train neural network.
             if len(buffer) >= batch_size and not first and not gun_fired:
+                ep_reward += reward
+
                 print('Reward: ', reward)
+                # print('Episode Reward: ', ep_reward)
                 states, actions, rewards, next_states, dones = buffer.sample(batch_size)
                 loss = train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
                                   states=states, actions=actions, rewards=rewards,
@@ -305,7 +310,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         test(reward_pars)
 
 
-# if __name__ == '__main__':
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
-#     epsilon_params = {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
+if __name__ == '__main__':
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
+    epsilon_params = {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
