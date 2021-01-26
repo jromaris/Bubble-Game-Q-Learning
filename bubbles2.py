@@ -54,7 +54,7 @@ def handle_game_events():
 
 
 # reward_params : {'game over': -200, 'no hit': -2, 'hit': 1}
-# epsilon_params : {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
+# epsilon_params : {constant: (False, 0), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
 def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92, model_n=0):
 
     epsilon = 1
@@ -151,7 +151,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
 
 # reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
-# epsilon_params = {'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
+# epsilon_params : {constant: (False, 0), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
 def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92, model_n=0):
     epsilon = 1
     buffer = ReplayBuffer(num_episodes+1)
