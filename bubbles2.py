@@ -89,7 +89,6 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                 handle_game_events()
 
             state = grid_manager.grid_state
-
             # Check collision with bullet and update grid as needed
             grid_manager.view(gun, game, reward_paras)
 
@@ -251,7 +250,7 @@ def train_graphic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32,
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models', compile=False)
+    main_nn = tf.keras.models.load_model('models/model0', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
