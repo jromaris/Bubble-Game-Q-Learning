@@ -150,6 +150,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
         if episode % 50 == 0:
             print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
+            print('len buffer: ', len(buffer))
 
     main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
