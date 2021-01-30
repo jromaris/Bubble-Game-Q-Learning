@@ -80,10 +80,10 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
     optimizer = tf.keras.optimizers.Adam(1e-4)
     mse = tf.keras.losses.MeanSquaredError()
     if SAVE_SAMPLES:
+        last_plays = deque(maxlen=5)
         to_save = []
 
     if USE_SAMPLES:
-        last_plays = deque(maxlen=5)
         saved = pickle.load(open('drive/Shareddrives/Redes/savedmodel' + str(model_n) +'.p', 'rb'))
 
     for episode in range(num_episodes):
