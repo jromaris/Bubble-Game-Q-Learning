@@ -57,7 +57,7 @@ def handle_game_events():
 # reward_params : {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True}
 # epsilon_params : {constant: (False, 0), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
 def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92,
-                amount_frames=2000, model_n=0):
+                amount_frames=2000, activation='tanh', model_n=0):
 
     epsilon = 1
     buffer = ReplayBuffer(100000+1)
@@ -73,8 +73,8 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
     action = random.randint(0, len(angles) - 1)
     num_actions = len(angles)
 
-    main_nn = DQN(num_actions=num_actions)
-    target_nn = DQN(num_actions=num_actions)
+    main_nn = DQN(num_actions=num_actions, activate=activation)
+    target_nn = DQN(num_actions=num_actions, activate=activation)
     optimizer = tf.keras.optimizers.Adam(1e-4)
     mse = tf.keras.losses.MeanSquaredError()
 
@@ -159,7 +159,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model4', compile=False)
+    main_nn = tf.keras.models.load_model('models/model5', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
@@ -197,16 +197,18 @@ def test(reward_paras):
         done = game.over  # or game.won
 
 
-def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000, mod_n=0):
+def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+         activation='tanh', mod_n=0):
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
         train_logic(epsilon_pars, reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
-                    amount_frames=amount_frames, model_n=mod_n)
+                    amount_frames=amount_frames, activation=activation, model_n=mod_n)
     else:
         test(reward_pars)
 
 
-# if __name__ == '__main__':
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True}
-#     epsilon_params = {'constant': (True, 0.7), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000, mod_n=0)
+if __name__ == '__main__':
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True}
+    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+         activation='tanh', mod_n=0)
