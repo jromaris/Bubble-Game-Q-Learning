@@ -23,8 +23,8 @@ class GridManager:
 
         # Initialize the grid
         self.grid = [[0 for col in range(self.cols)] for row in range(self.rows)]
-        self.color_translation = {BLACK: 0, LIGHT_GRAY: 2, DARK_GRAY: 4, WHITE: 6, RED: 8,
-                                  GREEN: 10, BLUE: 12, ORANGE: 14, YELLOW: 16, VIOLET: 18}
+        self.color_translation = {BLACK: 0, LIGHT_GRAY: 25, DARK_GRAY: 50, WHITE: 75, RED: 100,
+                                  GREEN: 125, BLUE: 150, ORANGE: 175, YELLOW: 200, VIOLET: 225}
         # Put bubbles in the grid
         for row in range(self.rows):
             for col in range(self.cols):
@@ -43,24 +43,14 @@ class GridManager:
         self.appendBottom()
         self.findTargets()  # Find the targets that will be checked for collisions
         self.collided = False  # There have been no collisions yet
-        self.collision_counter = 0  # How many collisions there have been. Used to determine when to add a new row to top
+        # How many collisions there have been. Used to determine when to add a new row to top
+        self.collision_counter = 0
         self.animations = []  # The list of animations for the bubbles falling effect
         self.paths = []  # The list if animations for the root search (lines) effect when visualtions are on
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
         self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 1))
-        # grid_state[][][0] pelotas que matchean con la pelota actual que tiene el shooter
-        # grid_state[][][1] pelotas que  no matchean con la pelota actual que tiene el shooter
-        # grid_state[][][2] pelotas que matchean con la pelota proxima que tiene el shooter
-        # grid_state[][][3] pelotas que no matchean con la pelota proxima que tiene el shooter
-
-        # self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-        # self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-        # self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-        # self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
-
-        # print(self.grid_state.shape)
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
