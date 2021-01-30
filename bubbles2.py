@@ -59,7 +59,7 @@ def handle_game_events():
 def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92, model_n=0):
 
     epsilon = 1
-    buffer = ReplayBuffer(num_episodes+1)
+    buffer = ReplayBuffer(100000+1)
     cur_frame = 0
 
     # Start training. Play game once and then train with a batch.
