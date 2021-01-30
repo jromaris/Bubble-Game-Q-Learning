@@ -8,9 +8,7 @@ import numpy as np
 import tensorflow as tf
 from objs.plotter import genlogistic, genlog_func
 from objs.constants import *
-
 import matplotlib.pyplot as plt
-
 
 
 def reset_game(reward_paras):
@@ -163,35 +161,27 @@ def test(reward_paras):
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
 
-    action = random.randint(0, len(angles) - 1)
-    num_actions = len(angles)
-
-    first = True
-    gun_fired = True
-
     game, background, grid_manager, gun = reset_game(reward_paras)
 
     ep_reward, done = 0, False
     while not done:  # or won game
         handle_game_events()
 
-        state = grid_manager.grid_state
-
         background.draw()
 
         grid_manager.view(gun, game, reward_paras)
+        state = grid_manager.grid_state
 
-        if not first:
-            gun_fired = gun.fire()
-            if not gun_fired:
-                state_in = tf.expand_dims(state, axis=0)
-                action = do_trained_action(main_nn, state_in)
-                print('\tAction: ', action)
-        else:
-            action = random.randint(0, len(angles) - 1)
-            first = False
+        if not gun.fired.exists:
+            # plt.imshow(state)
+            # plt.colorbar()
+            # plt.show()
+            state_in = tf.expand_dims(state, axis=0)
+            action = do_trained_action(main_nn, state_in)
+            # print('\tAction: ', action)
 
-        gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
+            gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
+            gun.fire()
 
         gun.draw_bullets()  # Draw and update bullet and reloads
 
@@ -213,7 +203,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         test(reward_pars)
 
 
-# if __name__ == '__main__':
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
-#     epsilon_params = {'constant': (True, 0.7), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
+if __name__ == '__main__':
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
+    epsilon_params = {'constant': (True, 0.7), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
