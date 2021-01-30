@@ -50,7 +50,7 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 1))
+        self.grid_state = np.zeros((GAMEOVER_ROWS + 1, GRID_COLS * 2 + 1, 4))
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
@@ -455,27 +455,34 @@ class GridManager:
 
     def learnGrid(self, currBall, nextBall):
         self.curr_balls = 0
+        # self.grid_curr_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+        # self.grid_curr_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+        # self.grid_next_ok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
+        # self.grid_next_nok = np.zeros((GAMEOVER_ROWS,GRID_COLS*2+1))
 
-        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 1))
+        self.grid_state = np.zeros((GAMEOVER_ROWS + 1, GRID_COLS * 2 + 1, 4))
         for row in range(self.rows):
-
+            # print("Row", row)
             for col in range(self.cols):
-
+                # print("Col", col)
                 currX = self.grid[row][col].pos[0]
-
+                # print("CurrX", currX)
                 currColor = self.grid[row][col].color
-
-                if currColor != BG_COLOR:
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)] = self.color_translation[currColor]
-                else:
-                    currColor = BLACK
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)] = self.color_translation[currColor]
-
-                self.grid_state[-1][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[nextBall]
-                self.grid_state[-2][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currBall]
-
+                if currBall == currColor:
+                    self.curr_balls += 1
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)][0] = 1
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)][0] = 1
+                if currBall != currColor and currColor != BG_COLOR:
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)][1] = 1
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)][1] = 1
+                    self.curr_balls += 1
+                if nextBall == currColor:
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)][2] = 1
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)][2] = 1
+                if nextBall == currColor and currColor != BG_COLOR:
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)][3] = 1
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)][3] = 1
+                    
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):
         score_diff = game.score - game.prev_score
