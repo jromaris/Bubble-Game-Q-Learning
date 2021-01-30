@@ -56,7 +56,8 @@ def handle_game_events():
 
 # reward_params : {'game over': -200, 'no hit': -2, 'hit': 1}
 # epsilon_params : {constant: (False, 0), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
-def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92, model_n=0):
+def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92,
+                amount_frames=2000, model_n=0):
 
     epsilon = 1
     buffer = ReplayBuffer(100000+1)
@@ -127,7 +128,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                                    num_actions=num_actions)
                         cur_frame += 1
                         # Copy main_nn weights to target_nn.
-                        if cur_frame % 2000 == 0:
+                        if cur_frame % amount_frames == 0:
                             target_nn.set_weights(main_nn.get_weights())
 
             gun.draw_bullets()   # Draw and update bullet and reloads
@@ -196,11 +197,11 @@ def test(reward_paras):
         done = game.over  # or game.won
 
 
-def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, mod_n=0):
+def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000, mod_n=0):
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
         train_logic(epsilon_pars, reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
-                    model_n=mod_n)
+                    amount_frames=amount_frames, model_n=mod_n)
     else:
         test(reward_pars)
 
@@ -208,4 +209,4 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
 # if __name__ == '__main__':
 #     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
 #     epsilon_params = {'constant': (True, 0.7), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
+#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000, mod_n=0)
