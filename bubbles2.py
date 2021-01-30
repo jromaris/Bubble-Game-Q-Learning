@@ -153,7 +153,8 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
             done = game.over  # or game.won
         if SAVE_SAMPLES:
-            to_save.append(last_plays.popleft())
+            pickle.dump(obj=last_plays.popleft(),
+                        file=open('drive/Shareddrives/Redes/savedmodel' + str(episode) + '.p', 'wb'))
 
         print(f'Episode {episode}/{num_episodes}')
         print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
@@ -169,9 +170,6 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
             print('len buffer: ', len(buffer))
 
-    if SAVE_SAMPLES:
-        for j in range(len(to_save)):
-            pickle.dump(obj=to_save[j], file=open('drive/Shareddrives/Redes/savedmodel' + str(j) + '.p', 'wb'))
     main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
 
