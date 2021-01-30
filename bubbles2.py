@@ -127,7 +127,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                                    num_actions=num_actions)
                         cur_frame += 1
                         # Copy main_nn weights to target_nn.
-                        if cur_frame % 50 == 0:
+                        if cur_frame % 2000 == 0:
                             target_nn.set_weights(main_nn.get_weights())
 
             gun.draw_bullets()   # Draw and update bullet and reloads
@@ -141,14 +141,15 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
         print(f'Episode {episode}/{num_episodes}')
         print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
-        epsilon -= 1 / num_episodes
+        if not epsilon_paras['constant'][0]:
+            epsilon -= 1 / num_episodes
 
         if len(last_100_ep_rewards) == 100:
             last_100_ep_rewards = last_100_ep_rewards[1:]
         last_100_ep_rewards.append(ep_reward)
 
         if episode % 50 == 0:
-            print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
+            print(f'Episode {episode}/{num_episodes}. Epsilon: {genlog_func(epsilon, epsilon_paras):.3f}. '
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
             print('len buffer: ', len(buffer))
 
@@ -157,7 +158,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model0', compile=False)
+    main_nn = tf.keras.models.load_model('models/model2', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
@@ -204,7 +205,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         test(reward_pars)
 
 
-if __name__ == '__main__':
-    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
-    epsilon_params = {'constant': (True, 0.7), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
+# if __name__ == '__main__':
+#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
+#     epsilon_params = {'constant': (True, 0.7), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92)
