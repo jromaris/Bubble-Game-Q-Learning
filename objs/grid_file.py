@@ -88,9 +88,12 @@ class GridManager:
             self.checkGameOver(game)
             self.collided = False
             self.learnGrid(gun.loaded.color, gun.reload1.color)
+            state = self.grid_state
             self.gameInfo(game, reward_params)
         # No matter what happens, update the grid
         # draws the bubbles, animations, visualizations
+            return state
+        self.learnGrid(gun.loaded.color, gun.reload1.color)
         if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
             self.draw()
 
@@ -481,7 +484,6 @@ class GridManager:
                 self.grid_state[-1][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[nextBall]
                 self.grid_state[-2][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currBall]
 
-
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):
         score_diff = game.score - game.prev_score
@@ -495,4 +497,4 @@ class GridManager:
         elif self.curr_hit:
             reward = reward_params['hit']
 
-        return self.grid_state, reward
+        return reward
