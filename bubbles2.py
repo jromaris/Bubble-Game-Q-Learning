@@ -84,7 +84,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
         to_save = []
 
     if USE_SAMPLES:
-        saved = pickle.load(open('drive/Shareddrives/Redes/savedmodel' + str(model_n) +'.p', 'rb'))
+        saved = pickle.load(open('drive/Shareddrives/Redes/plays/savedmodel' + str(model_n) +'.p', 'rb'))
 
     for episode in range(num_episodes):
 
@@ -154,7 +154,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
             done = game.over  # or game.won
         if SAVE_SAMPLES:
             pickle.dump(obj=last_plays.popleft(),
-                        file=open('drive/Shareddrives/Redes/savedmodel' + str(episode) + '.p', 'wb'))
+                        file=open('drive/Shareddrives/Redes/plays/savedmodel' + str(episode) + '.p', 'wb'))
 
         print(f'Episode {episode}/{num_episodes}')
         print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
