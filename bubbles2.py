@@ -9,9 +9,10 @@ import tensorflow as tf
 from objs.plotter import genlogistic, genlog_func
 from objs.constants import *
 import matplotlib.pyplot as plt
+from collections import deque
+import pickle
 
-
-def reset_game(reward_paras):
+def reset_game(reward_paras, initial_grid):
     # Create background
     if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
         background = Background()
@@ -24,7 +25,7 @@ def reset_game(reward_paras):
     if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
         gun.putInBox()
 
-    grid_manager = GridManager()
+    grid_manager = GridManager(initial_grid)
     game = Game()
 
     # Check collision with bullet and update grid as needed
@@ -60,6 +61,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                 amount_frames=2000, activation='tanh', model_n=0):
 
     epsilon = 1
+
     buffer = ReplayBuffer(100000+1)
     cur_frame = 0
 
@@ -77,9 +79,19 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
     target_nn = DQN(num_actions=num_actions, activate=activation)
     optimizer = tf.keras.optimizers.Adam(1e-4)
     mse = tf.keras.losses.MeanSquaredError()
+    if SAVE_SAMPLES:
+        to_save = []
+
+    if USE_SAMPLES:
+        last_plays = deque(maxlen=5)
+        saved = pickle.load(open('drive/Shareddrives/Redes/savedmodel' + str(model_n) +'.p', 'rb'))
 
     for episode in range(num_episodes):
-        game, background, grid_manager, gun = reset_game(reward_paras)
+
+        if USE_SAMPLES and len(saved) > episode:
+            game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=saved[episode])
+        else:
+            game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=None)
 
         # Check collision with bullet and update grid as needed
         state = grid_manager.grid_state
@@ -97,6 +109,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
             if not gun.fired.exists:
                 # has to be in this order !!
                 state = grid_manager.grid_state
+                last_plays.append(grid_manager.grid)
                 gun.fire()
                 state_in = tf.expand_dims(state, axis=0)
                 action = select_epsilon_greedy_action(main_nn, state_in,
@@ -139,6 +152,8 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                 clock.tick(60)  # 60 FPS
 
             done = game.over  # or game.won
+        if SAVE_SAMPLES:
+            to_save.append(last_plays.popleft())
 
         print(f'Episode {episode}/{num_episodes}')
         print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
@@ -154,17 +169,19 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
             print('len buffer: ', len(buffer))
 
+    if SAVE_SAMPLES:
+        pickle.dump(obj=to_save, file=open('drive/Shareddrives/Redes/savedmodel' + str(model_n) +'.p', 'wb'))
     main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model5', compile=False)
+    main_nn = tf.keras.models.load_model('models/model7', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
 
-    game, background, grid_manager, gun = reset_game(reward_paras)
+    game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=None)
 
     ep_reward, done = 0, False
     while not done:  # or won game
@@ -207,8 +224,8 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         test(reward_pars)
 
 
-if __name__ == '__main__':
-    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True}
-    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-         activation='tanh', mod_n=0)
+# if __name__ == '__main__':
+#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True}
+#     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+#          activation='tanh', mod_n=0)
