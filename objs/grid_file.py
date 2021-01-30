@@ -467,9 +467,11 @@ class GridManager:
 
                 if currColor != BG_COLOR:
                     self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)] = self.color_translation[currColor]
                 else:
                     currColor = BLACK
                     self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
+                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)] = self.color_translation[currColor]
 
                 self.grid_state[-1][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[nextBall]
                 self.grid_state[-2][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currBall]
