@@ -127,7 +127,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                                    num_actions=num_actions)
                         cur_frame += 1
                         # Copy main_nn weights to target_nn.
-                        if cur_frame % 50 == 0:
+                        if cur_frame % 2000 == 0:
                             target_nn.set_weights(main_nn.get_weights())
 
             gun.draw_bullets()   # Draw and update bullet and reloads
@@ -149,7 +149,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
         last_100_ep_rewards.append(ep_reward)
 
         if episode % 50 == 0:
-            print(f'Episode {episode}/{num_episodes}. Epsilon: {epsilon:.3f}. '
+            print(f'Episode {episode}/{num_episodes}. Epsilon: {genlog_func(epsilon, epsilon_paras):.3f}. '
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
             print('len buffer: ', len(buffer))
 
