@@ -4,17 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def fuchi(x):
-    return 1 / cosh(x)
-
-
-def gudermannian():
-    xs = [x/200 for x in range(-1000, 1001)]
-    results = np.array([integrate.quad(fuchi, 0, x) for x in xs])
-    plt.plot(results)
-    plt.show()
-
-
 def genlog_func(t, epsilon_params):
     t = 5*t - 1.5
     a = epsilon_params['a']

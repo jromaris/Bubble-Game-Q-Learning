@@ -13,16 +13,16 @@ import base64
 
 class DQN(tf.keras.Model):
     """Dense neural network class."""
-    def __init__(self, num_actions):
+    def __init__(self, num_actions, activate):
         super(DQN, self).__init__()
 
         self.input_lay = tf.keras.layers.InputLayer(input_shape=(32, 21+2, 41, 1))
-        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(6, 6), strides=(1, 1), activation='tanh')
-        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1), activation='tanh')
-        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size=(2, 2), strides=(1, 1), activation='tanh')
+        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(6, 6), strides=(1, 2), activation=activate)
+        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 2), activation=activate)
+        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size=(2, 2), strides=(1, 2), activation=activate)
         self.flat = tf.keras.layers.Flatten()
-        self.dense1 = tf.keras.layers.Dense(512, activation='tanh')
-        self.dense2 = tf.keras.layers.Dense(512, activation='tanh')
+        self.dense1 = tf.keras.layers.Dense(512, activation=activate)
+        self.dense2 = tf.keras.layers.Dense(512, activation=activate)
         self.dense3 = tf.keras.layers.Dense(num_actions, activation='sigmoid')
 
     def call(self, x, training=True, mask=None):
