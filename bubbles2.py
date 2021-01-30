@@ -141,7 +141,8 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
         print(f'Episode {episode}/{num_episodes}')
         print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
-        epsilon -= 1 / num_episodes
+        if not epsilon_paras['constant'][0]:
+            epsilon -= 1 / num_episodes
 
         if len(last_100_ep_rewards) == 100:
             last_100_ep_rewards = last_100_ep_rewards[1:]
