@@ -54,7 +54,7 @@ def handle_game_events():
                 quit()
 
 
-# reward_params : {'game over': -200, 'no hit': -2, 'hit': 1}
+# reward_params : {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True}
 # epsilon_params : {constant: (False, 0), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
 def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92,
                 amount_frames=2000, model_n=0):
@@ -207,6 +207,6 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
 
 
 # if __name__ == '__main__':
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1}
+#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True}
 #     epsilon_params = {'constant': (True, 0.7), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
 #     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000, mod_n=0)
