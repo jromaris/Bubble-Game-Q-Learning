@@ -55,7 +55,7 @@ class Game:
 
 		self.updateScore()
 		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
-			display.blit(self.score_label,(WALL_BOUND_L + 20, DISP_H - 40))
+			display.blit(self.score_label, (WALL_BOUND_L + 20, DISP_H - 40))
 
 	def drawGameOver(self):
 
