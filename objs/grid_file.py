@@ -483,7 +483,10 @@ class GridManager:
         elif not self.curr_hit:
             reward = reward_params['no hit']
         elif self.curr_hit and score_diff > 0:
-            reward = score_diff
+            if reward_params['balls_down_positive']:
+                reward += score_diff
+            else:
+                reward -= 1 / score_diff
         elif self.curr_hit:
             reward = reward_params['hit']
 
