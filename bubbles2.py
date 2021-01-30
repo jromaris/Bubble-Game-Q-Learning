@@ -152,14 +152,13 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
             print(f'Episode {episode}/{num_episodes}. Epsilon: {genlog_func(epsilon, epsilon_paras):.3f}. '
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
             print('len buffer: ', len(buffer))
-            if episode > 0:
-                main_nn.save(MODELS_PATH + '/model' + str(model_n))
 
+    main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model3', compile=False)
+    main_nn = tf.keras.models.load_model('models/model4', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
