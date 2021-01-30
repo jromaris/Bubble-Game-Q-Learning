@@ -9,7 +9,7 @@ import numpy as np
 
 class GridManager:
 
-    def __init__(self):
+    def __init__(self, initial_grid=None):
         self.curr_hit = False
         self.curr_balls = 0
         if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
@@ -26,13 +26,18 @@ class GridManager:
         self.color_translation = {BLACK: 0, LIGHT_GRAY: 25, DARK_GRAY: 50, WHITE: 75, RED: 100,
                                   GREEN: 125, BLUE: 150, ORANGE: 175, YELLOW: 200, VIOLET: 225}
         # Put bubbles in the grid
-        for row in range(self.rows):
-            for col in range(self.cols):
-                # Calculate the position of the bubbles that are going to be in the grid
-                pos = GridManager.calcPos(row, col, self.even_offset)
+        if initial_grid is None:
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    # Calculate the position of the bubbles that are going to be in the grid
+                    pos = GridManager.calcPos(row, col, self.even_offset)
 
-                # Create the grid bubbles. Note: The bubble's color is random be default
-                self.grid[row][col] = GridBubble(row, col, pos)
+                    # Create the grid bubbles. Note: The bubble's color is random be default
+                    self.grid[row][col] = GridBubble(row, col, pos)
+        else:
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    self.grid[row][col] = initial_grid[row][col]
 
         # find the neighbour of each bubble
         for row in range(self.rows):

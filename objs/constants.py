@@ -16,6 +16,8 @@ DISP_H = 600
 BOTTOM_CENTER = (450, 600)
 DISP_CENTER = (DISP_W/2, DISP_H/2)
 
+SAVE_SAMPLES = True
+USE_SAMPLES = False
 
 TRAIN_TEST = True
 TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
