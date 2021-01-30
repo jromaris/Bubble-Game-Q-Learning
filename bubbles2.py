@@ -170,7 +170,8 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
             print('len buffer: ', len(buffer))
 
     if SAVE_SAMPLES:
-        pickle.dump(obj=to_save, file=open('drive/Shareddrives/Redes/savedmodel' + str(model_n) +'.p', 'wb'))
+        for j in range(len(to_save)):
+            pickle.dump(obj=to_save[j], file=open('drive/Shareddrives/Redes/savedmodel' + str(j) + '.p', 'wb'))
     main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
 
