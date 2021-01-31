@@ -17,13 +17,19 @@ class DQN(tf.keras.Model):
         super(DQN, self).__init__()
 
         self.input_lay = tf.keras.layers.InputLayer(input_shape=(32, 21+2, 41, 1))
-        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(6, 6), strides=(1, 2), activation=activate)
-        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1), activation=activate)
-        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size=(2, 2), strides=(1, 1), activation=activate)
+        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(6, 6), strides=(1, 2), activation=activate,
+                                            bias_initializer=tf.constant_initializer(value=0.1))
+        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1), activation=activate,
+                                            bias_initializer=tf.constant_initializer(value=0.1))
+        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size=(2, 2), strides=(1, 1), activation=activate,
+                                            bias_initializer=tf.constant_initializer(value=0.1))
         self.flat = tf.keras.layers.Flatten()
-        self.dense1 = tf.keras.layers.Dense(1023, activation=activate)
-        self.dense2 = tf.keras.layers.Dense(512, activation=activate)
-        self.dense3 = tf.keras.layers.Dense(num_actions, activation='sigmoid')
+        self.dense1 = tf.keras.layers.Dense(512, activation=activate,
+                                            bias_initializer=tf.constant_initializer(value=0.1))
+        self.dense2 = tf.keras.layers.Dense(512, activation=activate,
+                                            bias_initializer=tf.constant_initializer(value=0.1))
+        # self.dense3 = tf.keras.layers.Dense(num_actions, activation='sigmoid')
+        self.dense3 = tf.keras.layers.Dense(num_actions, activation=None)
 
     def call(self, x, training=True, mask=None):
         """Forward pass."""
