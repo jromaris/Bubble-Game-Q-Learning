@@ -79,15 +79,17 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
     target_nn = DQN(num_actions=num_actions, activate=activation)
     optimizer = tf.keras.optimizers.Adam(1e-4)
     mse = tf.keras.losses.MeanSquaredError()
+
     if SAVE_SAMPLES:
         last_plays = deque(maxlen=5)
         to_save = []
 
     if USE_SAMPLES:
-        saved = pickle.load(open('drive/Shareddrives/Redes/plays/savedmodel' + str(model_n) +'.p', 'rb'))
+        saved = []
+        for i in range(1000):
+            saved.append(pickle.load(open('./plays/savedmodel' + str(model_n) + '.p', 'rb')))
 
     for episode in range(num_episodes):
-
         if USE_SAMPLES and len(saved) > episode:
             game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=saved[episode])
         else:
@@ -109,7 +111,8 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
             if not gun.fired.exists:
                 # has to be in this order !!
                 state = grid_manager.grid_state
-                last_plays.append(grid_manager.grid)
+                if SAVE_SAMPLES:
+                    last_plays.append(grid_manager.grid)
                 gun.fire()
                 state_in = tf.expand_dims(state, axis=0)
                 action = select_epsilon_greedy_action(main_nn, state_in,
@@ -175,7 +178,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model7', compile=False)
+    main_nn = tf.keras.models.load_model('models/model8', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
