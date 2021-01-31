@@ -64,7 +64,6 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
     buffer = ReplayBuffer(100000+1)
     cur_frame = 0
-    update_after_actions = 4
     # Start training. Play game once and then train with a batch.
     last_100_ep_rewards = []
     limit_a, limit_b = 15, 165
@@ -125,7 +124,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                     # Save to experience replay.
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
-                    if cur_frame % update_after_actions == 0 and len(buffer) >= batch_size:
+                    if len(buffer) >= batch_size:
                         # print('Reward: ', reward)
                         # print('Episode Reward: ', ep_reward)
                         # Train neural network.
@@ -178,7 +177,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model8', compile=False)
+    main_nn = tf.keras.models.load_model('models/model5', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
