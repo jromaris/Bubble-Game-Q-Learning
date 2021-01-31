@@ -64,7 +64,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
     buffer = ReplayBuffer(100000+1)
     cur_frame = 0
-
+    update_after_actions = 4
     # Start training. Play game once and then train with a batch.
     last_100_ep_rewards = []
     limit_a, limit_b = 15, 165
@@ -77,8 +77,8 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
 
     main_nn = DQN(num_actions=num_actions, activate=activation)
     target_nn = DQN(num_actions=num_actions, activate=activation)
-    optimizer = tf.keras.optimizers.Adam(1e-4)
-    mse = tf.keras.losses.MeanSquaredError()
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
+    mse = tf.keras.losses.Huber()
 
     if SAVE_SAMPLES:
         last_plays = deque(maxlen=5)
@@ -125,7 +125,7 @@ def train_logic(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, d
                     # Save to experience replay.
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
-                    if len(buffer) >= batch_size:
+                    if cur_frame % update_after_actions == 0 and len(buffer) >= batch_size:
                         # print('Reward: ', reward)
                         # print('Episode Reward: ', ep_reward)
                         # Train neural network.

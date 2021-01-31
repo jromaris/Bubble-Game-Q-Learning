@@ -12,7 +12,7 @@ import base64
 
 
 class DQN(tf.keras.Model):
-    """Dense neural network class."""
+    """Dense neural network class. https://keras.io/examples/rl/deep_q_network_breakout/"""
     def __init__(self, num_actions, activate):
         super(DQN, self).__init__()
 
@@ -29,7 +29,7 @@ class DQN(tf.keras.Model):
         self.dense2 = tf.keras.layers.Dense(512, activation=activate,
                                             bias_initializer=tf.constant_initializer(value=0.1))
         # self.dense3 = tf.keras.layers.Dense(num_actions, activation='sigmoid')
-        self.dense3 = tf.keras.layers.Dense(num_actions, activation=None)
+        self.dense3 = tf.keras.layers.Dense(num_actions, activation='linear')
 
     def call(self, x, training=True, mask=None):
         """Forward pass."""
@@ -97,12 +97,13 @@ def train_step(main_nn, target_nn, mse, optimizer, states, actions,
     replay buffer."""
     # Calculate targets.
     next_qs = target_nn(next_states)
-    max_next_qs = tf.reduce_max(next_qs, axis=-1)
-    target = rewards + (1. - dones) * discount * max_next_qs
+    target = rewards + discount * tf.reduce_max(next_qs, axis=1)
+    target = target*(1. - dones) - dones
+
+    action_masks = tf.one_hot(actions, num_actions)
     with tf.GradientTape() as tape:
         qs = main_nn(states)
-        action_masks = tf.one_hot(actions, num_actions)
-        masked_qs = tf.reduce_sum(action_masks * qs, axis=-1)
+        masked_qs = tf.reduce_sum(tf.multiply(qs, action_masks), axis=1)
         loss = mse(target, masked_qs)
     grads = tape.gradient(loss, main_nn.trainable_variables)
     optimizer.apply_gradients(zip(grads, main_nn.trainable_variables))
