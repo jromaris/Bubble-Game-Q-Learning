@@ -41,7 +41,7 @@ class DQN(tf.keras.Model):
         x = self.flat(x)
 
         x = self.dense1(x)
-        x = self.dense2(x)
+        # x = self.dense2(x)
         x = self.dense3(x)
         return x
 
