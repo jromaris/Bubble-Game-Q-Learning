@@ -25,6 +25,7 @@ class GridManager:
         self.grid = [[0 for col in range(self.cols)] for row in range(self.rows)]
         self.color_translation = {BLACK: 0, LIGHT_GRAY: 25, DARK_GRAY: 50, WHITE: 75, RED: 100,
                                   GREEN: 125, BLUE: 150, ORANGE: 175, YELLOW: 200, VIOLET: 225}
+
         # Put bubbles in the grid
         if initial_grid is None:
             for row in range(self.rows):
@@ -35,9 +36,13 @@ class GridManager:
                     # Create the grid bubbles. Note: The bubble's color is random be default
                     self.grid[row][col] = GridBubble(row, col, pos)
         else:
+            self.to_color_translation = {v: k for k, v in self.color_translation.items()}
             for row in range(self.rows):
                 for col in range(self.cols):
-                    self.grid[row][col] = initial_grid[row][col]
+                    # Augment missing!!!
+                    pos = GridManager.calcPos(row, col, self.even_offset)
+                    color = self.to_color_translation[initial_grid[row][col]]
+                    self.grid[row][col] = GridBubble(row, col, pos, color=color)
 
         # find the neighbour of each bubble
         for row in range(self.rows):
@@ -55,7 +60,7 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 1))
+        self.grid_state = np.zeros((GAMEOVER_ROWS+2, GRID_COLS+1, 1))
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
@@ -99,7 +104,9 @@ class GridManager:
         # the game can't possibly be over so return
         if self.rows < GAMEOVER_ROWS:
             return
-
+        elif self.rows == 0:
+            game.won = True
+            return
         # if there is an existing bubble in the row with index GAMEOVER_ROWS-1, the game is over
         # aka if there is a bubble below the red line, the game is over
         for col in range(self.cols):
@@ -405,11 +412,6 @@ class GridManager:
                 label = self.myfont.render(str(row) + str(col), True, (0, 0, 0))
                 # put the label object on the screen at point x=100, y=100
                 display.blit(label, self.grid[row][col].pos)
-        #
-        # for row in range(len(self.grid_state)):
-        #     for col in range(len(self.grid_state[0])):
-        #         if self.grid_state[row][col][0]:
-        #             pg.draw.circle(display, BLACK, (135 + col * 16.25 - 8.125, 15 + 30 * row), 1)
 
         for animation in self.animations:
             if not animation:
@@ -461,25 +463,20 @@ class GridManager:
     def learnGrid(self, currBall, nextBall):
         self.curr_balls = 0
 
-        self.grid_state = np.zeros((GAMEOVER_ROWS + 1 + 2, GRID_COLS * 2 + 1, 1))
         for row in range(self.rows):
-
+            if row % 2 == 0:
+                augment = 1
+            else:
+                augment = 0
             for col in range(self.cols):
+                curr_color = self.grid[row][col].color
+                if curr_color == BG_COLOR:
+                    curr_color = BLACK
+                self.grid_state[row][col+augment] = self.color_translation[curr_color]
 
-                currX = self.grid[row][col].pos[0]
-
-                currColor = self.grid[row][col].color
-
-                if currColor != BG_COLOR:
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)] = self.color_translation[currColor]
-                else:
-                    currColor = BLACK
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currColor]
-                    self.grid_state[row][int((((currX - 150) / (16.125))) + 2)] = self.color_translation[currColor]
-
-                self.grid_state[-1][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[nextBall]
-                self.grid_state[-2][int((((currX - 150) / (16.125))) + 1)] = self.color_translation[currBall]
+        for col in range(self.cols+1):
+            self.grid_state[-1][col] = self.color_translation[nextBall]
+            self.grid_state[-2][col] = self.color_translation[currBall]
 
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):
@@ -496,5 +493,7 @@ class GridManager:
                 reward -= 1 / score_diff
         elif self.curr_hit:
             reward = reward_params['hit']
+        elif game.won:
+            reward = reward_params['game won']
 
         return reward

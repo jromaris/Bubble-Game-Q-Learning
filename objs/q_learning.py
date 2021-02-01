@@ -4,11 +4,7 @@ from collections import deque
 import tensorflow as tf
 import numpy as np
 import random
-import math
-import time
-import glob
-import io
-import base64
+from objs.constants import GAMEOVER_ROWS, GRID_COLS
 
 
 class DQN(tf.keras.Model):
@@ -16,12 +12,12 @@ class DQN(tf.keras.Model):
     def __init__(self, num_actions, activate):
         super(DQN, self).__init__()
 
-        self.input_lay = tf.keras.layers.InputLayer(input_shape=(32, 21+2, 41, 1))
-        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(8, 8), strides=(1, 2), activation=activate,
+        self.input_lay = tf.keras.layers.InputLayer(input_shape=(32, GAMEOVER_ROWS+2, GRID_COLS+1, 1))
+        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(4, 4), strides=(1, 1), activation=activate,
                                             bias_initializer=tf.constant_initializer(value=0.1))
-        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(4, 4), strides=(1, 1), activation=activate,
+        self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1), activation=activate,
                                             bias_initializer=tf.constant_initializer(value=0.1))
-        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size=(3, 3), strides=(1, 1), activation=activate,
+        self.conv3 = tf.keras.layers.Conv2D(filters=96, kernel_size=(2, 2), strides=(1, 1), activation=activate,
                                             bias_initializer=tf.constant_initializer(value=0.1))
         self.flat = tf.keras.layers.Flatten()
         self.dense1 = tf.keras.layers.Dense(512, activation=activate,
