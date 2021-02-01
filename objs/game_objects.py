@@ -11,6 +11,7 @@ class Game:
 	def __init__(self):
 		self.over = False
 		self.score = 0
+		self.won = False
 		self.prev_score = self.score
 
 		if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
@@ -93,14 +94,14 @@ class Background:
 		return bg
 
 	def draw(self):
-		display.blit(self.image, (0,0))
+		display.blit(self.image, (0, 0))
 
 		pg.draw.line(display, BLUE, (WALL_BOUND_L, 0), (WALL_BOUND_L, DISP_H))
 		pg.draw.line(display, BLUE, (WALL_BOUND_R, 0), (WALL_BOUND_R, DISP_H))
 		pg.draw.line(display, RED, (WALL_BOUND_L, DISP_H - FLOOR_HEIGHT), (WALL_BOUND_R, DISP_H - FLOOR_HEIGHT))
 
 		display.blit(self.floor, (WALL_BOUND_L, WALL_BOUND_FLOOR))
-		display.blit(self.wall, (0,0))
+		display.blit(self.wall, (0, 0))
 		display.blit(self.wall, (WALL_BOUND_R, 0))
 
 
