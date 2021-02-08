@@ -6,14 +6,17 @@ import numpy as np
 import random
 from objs.constants import GAMEOVER_ROWS, GRID_COLS
 
+container = dict()
 
 class DQN(tf.keras.Model):
     """Dense neural network class. https://keras.io/examples/rl/deep_q_network_breakout/"""
-    def __init__(self, num_actions, activate):
+    def __init__(self, num_actions, activate, batch_size):
         super(DQN, self).__init__()
 
-        self.input_lay = tf.keras.layers.InputLayer(input_shape=(32, GAMEOVER_ROWS+2, GRID_COLS+1, 1))
-        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(4, 4), strides=(1, 1), activation=activate,
+        self.input_lay = tf.keras.layers.InputLayer(input_shape=(batch_size, GAMEOVER_ROWS+2, GRID_COLS+1, 1))
+        # self.input_lay = tf.keras.layers.InputLayer(input_shape=(batch_size, GAMEOVER_ROWS+2, GRID_COLS*2+1, 1))
+
+        self.conv1 = tf.keras.layers.Conv2D(filters=32, kernel_size=(4, 4), strides=(1, 2), activation=activate,
                                             bias_initializer=tf.constant_initializer(value=0.1))
         self.conv2 = tf.keras.layers.Conv2D(filters=64, kernel_size=(2, 2), strides=(1, 1), activation=activate,
                                             bias_initializer=tf.constant_initializer(value=0.1))
@@ -86,21 +89,24 @@ def do_trained_action(main_nn, state):
     return tf.argmax(main_nn(state)[0]).numpy()
 
 
-@tf.function
-def train_step(main_nn, target_nn, mse, optimizer, states, actions,
-               rewards, next_states, dones, discount, num_actions):
+# @tf.function
+def train_step(states, actions, rewards, next_states, dones):
+
     """Perform a training iteration on a batch of data sampled from the experience
     replay buffer."""
     # Calculate targets.
-    next_qs = target_nn(next_states)
-    target = rewards + discount * tf.reduce_max(next_qs, axis=1)
+    # main_nn, target_nn, mse, optimizer, states, actions,
+    # rewards, next_states, dones, discount, num_actions):
+
+    next_qs = container['target_nn'](next_states)
+    target = rewards + container['discount'] * tf.reduce_max(next_qs, axis=1)
     target = target*(1. - dones) - dones
 
-    action_masks = tf.one_hot(actions, num_actions)
+    action_masks = tf.one_hot(actions, container['num_actions'])
     with tf.GradientTape() as tape:
-        qs = main_nn(states)
+        qs = container['main_nn'](states)
         masked_qs = tf.reduce_sum(tf.multiply(qs, action_masks), axis=1)
-        loss = mse(target, masked_qs)
-    grads = tape.gradient(loss, main_nn.trainable_variables)
-    optimizer.apply_gradients(zip(grads, main_nn.trainable_variables))
+        loss = container['mse'](target, masked_qs)
+    grads = tape.gradient(loss, container['main_nn'].trainable_variables)
+    container['optimizer'].apply_gradients(zip(grads, container['main_nn'].trainable_variables))
     return loss

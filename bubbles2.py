@@ -11,6 +11,7 @@ from objs.constants import *
 import matplotlib.pyplot as plt
 from collections import deque
 import pickle
+import objs.q_learning
 
 def reset_game(reward_paras, initial_grid):
     # Create background
@@ -74,10 +75,17 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
     action = random.randint(0, len(angles) - 1)
     num_actions = len(angles)
 
-    main_nn = DQN(num_actions=num_actions, activate=activation)
-    target_nn = DQN(num_actions=num_actions, activate=activation)
+    main_nn = DQN(num_actions=num_actions, activate=activation, batch_size=batch_size)
+    target_nn = DQN(num_actions=num_actions, activate=activation, batch_size=batch_size)
     optimizer = tf.keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
     mse = tf.keras.losses.Huber()
+
+    objs.q_learning.container['main_nn'] = main_nn
+    objs.q_learning.container['target_nn'] = target_nn
+    objs.q_learning.container['optimizer'] = optimizer
+    objs.q_learning.container['mse'] = mse
+    objs.q_learning.container['discount'] = discount
+    objs.q_learning.container['num_actions'] = num_actions
 
     if SAVE_SAMPLES:
         last_plays = deque(maxlen=5)
@@ -125,8 +133,8 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
                     if len(buffer) >= batch_size:
-                        # print('Reward: ', reward)
-                        # print('Episode Reward: ', ep_reward)
+                        print('Reward: ', reward)
+                        print('Episode Reward: ', ep_reward)
                         # Train neural network.
                         # if ep_reward < -200:
                         # plt.imshow(state)
@@ -137,10 +145,13 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
                         # plt.show()
 
                         states, actions, rewards, next_states, dones = buffer.sample(batch_size)
-                        train_step(main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
-                                   states=states, actions=actions, rewards=rewards,
-                                   next_states=next_states, dones=dones, discount=discount,
-                                   num_actions=num_actions)
+
+                        train_step(states=states, actions=actions, rewards=rewards, next_states=next_states,
+                                   dones=dones)
+                            # main_nn=main_nn, target_nn=target_nn, mse=mse, optimizer=optimizer,
+                            #        states=states, actions=actions, rewards=rewards,
+                            #        next_states=next_states, dones=dones, discount=discount,
+                            #        num_actions=num_actions)
                         cur_frame += 1
                         # Copy main_nn weights to target_nn.
                         if cur_frame % amount_frames == 0:
@@ -177,7 +188,7 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model5', compile=False)
+    main_nn = tf.keras.models.load_model('models/model16', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
@@ -224,9 +235,9 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
     else:
         test(reward_pars)
 
-#
-# if __name__ == '__main__':
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
-#     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-#          activation='tanh', mod_n=0)
+
+if __name__ == '__main__':
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
+    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+         activation='tanh', mod_n=0)
