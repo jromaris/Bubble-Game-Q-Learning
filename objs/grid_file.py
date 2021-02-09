@@ -458,7 +458,8 @@ class GridManager:
                 self.prev_time = time.time()
                 if self.paths:
                     del self.paths[0][0]
-                    if not self.paths[0]: del self.paths[0]
+                    if not self.paths[0]:
+                        del self.paths[0]
 
     def learnGrid(self, currBall, nextBall):
         self.curr_balls = 0
@@ -480,12 +481,13 @@ class GridManager:
                 self.grid_state[row][2 * col + augment + 1][1] = curr_color[1]
                 self.grid_state[row][2 * col + augment + 1][2] = curr_color[2]
 
-                # self.grid_state[row][2*col+augment] = self.color_translation[curr_color]
-                # self.grid_state[row][2*col+augment+1] = self.color_translation[curr_color]
-
-        for col in range(self.cols+1):
-            self.grid_state[-1][col] = self.color_translation[nextBall]
-            self.grid_state[-2][col] = self.color_translation[currBall]
+        for col in range(2*self.cols+1):
+            self.grid_state[-1][col][0] = nextBall[0]
+            self.grid_state[-1][col][1] = nextBall[1]
+            self.grid_state[-1][col][2] = nextBall[2]
+            self.grid_state[-2][col][0] = currBall[0]
+            self.grid_state[-2][col][1] = currBall[1]
+            self.grid_state[-2][col][2] = currBall[2]
 
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):
