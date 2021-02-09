@@ -12,6 +12,7 @@ container = dict()
 
 
 def DQN(num_actions, activate):
+    """https://keras.io/examples/rl/deep_q_network_breakout/"""
     input_lay = layers.Input(shape=(GAMEOVER_ROWS + 2, 2*GRID_COLS + 1, 3,))
 
     conv1 = layers.Conv2D(32, 4, strides=1, activation=activate)(input_lay)
