@@ -60,7 +60,7 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-        self.grid_state = np.zeros((GAMEOVER_ROWS+2, GRID_COLS*2+1, 1))
+        self.grid_state = np.zeros((GAMEOVER_ROWS+2, GRID_COLS*2+1, 3))
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
@@ -473,8 +473,15 @@ class GridManager:
                 if curr_color == BG_COLOR:
                     curr_color = BLACK
 
-                self.grid_state[row][2*col+augment] = self.color_translation[curr_color]
-                self.grid_state[row][2*col+augment+1] = self.color_translation[curr_color]
+                self.grid_state[row][2 * col + augment][0] = curr_color[0]
+                self.grid_state[row][2 * col + augment][1] = curr_color[1]
+                self.grid_state[row][2 * col + augment][2] = curr_color[2]
+                self.grid_state[row][2 * col + augment + 1][0] = curr_color[0]
+                self.grid_state[row][2 * col + augment + 1][1] = curr_color[1]
+                self.grid_state[row][2 * col + augment + 1][2] = curr_color[2]
+
+                # self.grid_state[row][2*col+augment] = self.color_translation[curr_color]
+                # self.grid_state[row][2*col+augment+1] = self.color_translation[curr_color]
 
         for col in range(self.cols+1):
             self.grid_state[-1][col] = self.color_translation[nextBall]

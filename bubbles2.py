@@ -13,6 +13,7 @@ from collections import deque
 import pickle
 import objs.q_learning
 
+
 def reset_game(reward_paras, initial_grid):
     # Create background
     if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
@@ -75,8 +76,8 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
     action = random.randint(0, len(angles) - 1)
     num_actions = len(angles)
 
-    main_nn = DQN(num_actions=num_actions, activate=activation, batch_size=batch_size)
-    target_nn = DQN(num_actions=num_actions, activate=activation, batch_size=batch_size)
+    main_nn = DQN(num_actions=num_actions, activate=activation)
+    target_nn = DQN(num_actions=num_actions, activate=activation)
     optimizer = tf.keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
     mse = tf.keras.losses.Huber()
 
@@ -121,7 +122,8 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
                 if SAVE_SAMPLES:
                     last_plays.append(grid_manager.grid)
                 gun.fire()
-                state_in = tf.expand_dims(state, axis=0)
+                state_in = tf.convert_to_tensor(state)
+                state_in = tf.expand_dims(state_in, 0)
                 action = select_epsilon_greedy_action(main_nn, state_in,
                                                       genlog_func(epsilon, epsilon_paras), num_actions)
                 # gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
@@ -231,7 +233,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
         train(epsilon_pars, reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
-                    amount_frames=amount_frames, activation=activation, model_n=mod_n)
+              amount_frames=amount_frames, activation=activation, model_n=mod_n)
     else:
         test(reward_pars)
 
@@ -240,4 +242,4 @@ if __name__ == '__main__':
     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-         activation='tanh', mod_n=0)
+         activation='relu', mod_n=0)
