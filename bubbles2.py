@@ -205,7 +205,7 @@ def test(reward_paras):
         background.draw()
 
         grid_manager.view(gun, game, reward_paras)
-        state = grid_manager.grid_state
+        state = grid_manager.grid_state.copy()
 
         if not gun.fired.exists:
             # plt.imshow(state)
@@ -226,7 +226,7 @@ def test(reward_paras):
 
         clock.tick(20)  # 60 FPS
 
-        done = game.over  # or game.won
+        done = game.over or game.won
 
 
 def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
