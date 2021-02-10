@@ -69,7 +69,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
     # Start training. Play game once and then train with a batch.
     last_100_ep_rewards = []
     limit_a, limit_b = 15, 165
-    angle_step = 0.5
+    angle_step = 2
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
     print('angles:', angles)
 
@@ -136,22 +136,24 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                 next_state = grid_manager.view(gun, game, reward_paras)
                 grid_manager.learnGrid(gun.loaded.color, gun.reload1.color)
                 if next_state is not None:
+                    grid_manager.checkGameOver(game)
                     reward = grid_manager.gameInfo(game, reward_paras)
                     # Save to experience replay.
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
+
                     if len(buffer) >= batch_size:
-                        # print('Reward: ', reward)
-                        # print('Episode Reward: ', ep_reward)
-                        # Train neural network.
-                        # plt.title('State')
-                        # plt.imshow(state)
-                        # plt.colorbar()
-                        # plt.show()
-                        # plt.title('Next State, reward: ' + str(reward))
-                        # plt.imshow(next_state)
-                        # plt.colorbar()
-                        # plt.show()
+                        #print('Reward: ', reward)
+                        #print('Episode Reward: ', ep_reward)
+                        #Train neural network.
+                        #plt.title('State' + "CurrBalls" + str(grid_manager.curr_balls))
+                        #plt.imshow(state)
+                        #plt.colorbar()
+                        #plt.show()
+                        #plt.title('Next State, reward: ' + str(reward) + "CurrBalls" + str(grid_manager.curr_balls))
+                        #plt.imshow(next_state)
+                        #plt.colorbar()
+                        #plt.show()
 
                         states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 
@@ -243,7 +245,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         test(reward_pars)
 
 
-# if __name__ == '__main__':
+#if __name__ == '__main__':
 #     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
 #     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
 #     # saved_model = tf.keras.models.load_model('models/model30', compile=False)

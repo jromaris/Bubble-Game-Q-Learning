@@ -11,7 +11,7 @@ class GridManager:
 
     def __init__(self, initial_grid=None):
         self.curr_hit = False
-        self.curr_balls = 0
+        self.curr_balls = GRID_ROWS*GRID_COLS
         if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
             self.myfont = pg.font.SysFont("Comic Sans MS", 7)  # pick a font you have and set its size
         self.rows = GRID_ROWS  # Initialize the amount of rows
@@ -60,7 +60,7 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-        self.grid_state = np.zeros((GAMEOVER_ROWS+2, GRID_COLS*2+1, 3))
+        self.grid_state = np.zeros((GAMEOVER_ROWS+3, GRID_COLS*2+1, 3))
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
@@ -73,7 +73,7 @@ class GridManager:
         if self.collided:
             self.collision_counter += 1
             bubble = self.reviveBubble(gun.fired)
-
+            self.curr_balls +=1
             # Check if the new bubble has any adjacent bubble of the same color
             for b in bubble.getComrades():
                 if bubble.color == b.color:
@@ -103,10 +103,10 @@ class GridManager:
 
         # If the total amount of rows (including non-existent bubbles) is less than the GAMEOVER_ROWS,
         # the game can't possibly be over so return
-        if self.rows < GAMEOVER_ROWS:
-            return
-        elif self.rows == 0:
+        if self.curr_balls == 0:
             game.won = True
+            return
+        if self.rows < GAMEOVER_ROWS:
             return
         # if there is an existing bubble in the row with index GAMEOVER_ROWS-1, the game is over
         # aka if there is a bubble below the red line, the game is over
@@ -222,6 +222,7 @@ class GridManager:
 
         # Since we want to shift everything down, the opposite row will have an offset
         self.even_offset = not self.even_offset
+        self.curr_balls += self.cols
 
         # create a new row and insert it to the grid
         new_row = []
@@ -283,6 +284,7 @@ class GridManager:
                 self.animations.append(frames)
 
                 game.score += 1
+                self.curr_balls -= 1
 
                 for comrade in bubble.getComrades():
                     if comrade.exists and (comrade not in cluster):
@@ -463,7 +465,6 @@ class GridManager:
                         del self.paths[0]
 
     def learnGrid(self, currBall, nextBall):
-        self.curr_balls = 0
 
         if self.appended_top:
             row_n_appended = 1
@@ -515,7 +516,7 @@ class GridManager:
                 reward -= 1 / score_diff
         elif self.curr_hit:
             reward = reward_params['hit']
-        elif game.won:
+        if game.won:
             reward = reward_params['game won']
 
         return reward
