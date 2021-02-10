@@ -17,7 +17,7 @@ class GridManager:
         self.rows = GRID_ROWS  # Initialize the amount of rows
         self.cols = GRID_COLS  # Initialize the amount if cols
         self.even_offset = True  # Which rows (even or odd) are offset
-
+        self.appended_top = False
         # this will contain the bubbles that will be checked for collisions
         self.targets = []
 
@@ -82,17 +82,18 @@ class GridManager:
                 else:
                     self.curr_hit = False
 
+            self.appended_top = (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0)
             self.updateRows()
             self.popCluster(bubble, game)
             self.findTargets()
             self.checkGameOver(game)
             self.collided = False
             self.learnGrid(gun.loaded.color, gun.reload1.color)
-            state = self.grid_state
             self.gameInfo(game, reward_params)
+
         # No matter what happens, update the grid
         # draws the bubbles, animations, visualizations
-            return state
+            return self.grid_state.copy()
         self.learnGrid(gun.loaded.color, gun.reload1.color)
         if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
             self.draw()
@@ -464,22 +465,32 @@ class GridManager:
     def learnGrid(self, currBall, nextBall):
         self.curr_balls = 0
 
+        if self.appended_top:
+            row_n_appended = 1
+        else:
+            row_n_appended = 0
+        self.appended_top = False
+
         for row in range(self.rows):
-            if row % 2 == 0:
+            self.grid_state[row - row_n_appended][0] = BLACK
+            self.grid_state[row - row_n_appended][GRID_COLS * 2] = BLACK
+
+            if (row % 2) != self.even_offset:
                 augment = 1
             else:
                 augment = 0
+
             for col in range(self.cols):
                 curr_color = self.grid[row][col].color
                 if curr_color == BG_COLOR:
                     curr_color = BLACK
 
-                self.grid_state[row][2 * col + augment][0] = curr_color[0]
-                self.grid_state[row][2 * col + augment][1] = curr_color[1]
-                self.grid_state[row][2 * col + augment][2] = curr_color[2]
-                self.grid_state[row][2 * col + augment + 1][0] = curr_color[0]
-                self.grid_state[row][2 * col + augment + 1][1] = curr_color[1]
-                self.grid_state[row][2 * col + augment + 1][2] = curr_color[2]
+                self.grid_state[row-row_n_appended][2 * col + augment][0] = curr_color[0]
+                self.grid_state[row-row_n_appended][2 * col + augment][1] = curr_color[1]
+                self.grid_state[row-row_n_appended][2 * col + augment][2] = curr_color[2]
+                self.grid_state[row-row_n_appended][2 * col + augment + 1][0] = curr_color[0]
+                self.grid_state[row-row_n_appended][2 * col + augment + 1][1] = curr_color[1]
+                self.grid_state[row-row_n_appended][2 * col + augment + 1][2] = curr_color[2]
 
         for col in range(2*self.cols+1):
             self.grid_state[-1][col][0] = nextBall[0]

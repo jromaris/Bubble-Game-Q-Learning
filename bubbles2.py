@@ -102,6 +102,7 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
             game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=saved[episode])
         else:
             game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=None)
+            next_state = None
 
         # Check collision with bullet and update grid as needed
         state = grid_manager.grid_state
@@ -118,42 +119,36 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
 
             if not gun.fired.exists:
                 # has to be in this order !!
-                state = grid_manager.grid_state
-                plt.title('State')
-                plt.imshow(state)
-                plt.show()
+                state = grid_manager.grid_state.copy()
                 if SAVE_SAMPLES:
                     last_plays.append(grid_manager.grid)
                 gun.fire()
+
                 state_in = tf.convert_to_tensor(state)
                 state_in = tf.expand_dims(state_in, 0)
                 action = select_epsilon_greedy_action(main_nn, state_in,
                                                       genlog_func(epsilon, epsilon_paras), num_actions)
-                # gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
+
             else:
                 next_state = grid_manager.view(gun, game, reward_paras)
-
+                grid_manager.learnGrid(gun.loaded.color, gun.reload1.color)
                 if next_state is not None:
-                    plt.title('Next State')
-                    plt.imshow(next_state)
-                    plt.show()
                     reward = grid_manager.gameInfo(game, reward_paras)
                     # Save to experience replay.
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
                     if len(buffer) >= batch_size:
-                        # print('Reward: ', reward)
-                        # print('Episode Reward: ', ep_reward)
+                        print('Reward: ', reward)
+                        print('Episode Reward: ', ep_reward)
                         # Train neural network.
-                        # if ep_reward < -200:
-                        # plt.title('State')
-                        # plt.imshow(state)
-                        # plt.colorbar()
-                        # plt.show()
-                        # plt.title('Next State')
-                        # plt.imshow(next_state)
-                        # plt.colorbar()
-                        # plt.show()
+                        plt.title('State')
+                        plt.imshow(state)
+                        plt.colorbar()
+                        plt.show()
+                        plt.title('Next State, reward: ' + str(reward))
+                        plt.imshow(next_state)
+                        plt.colorbar()
+                        plt.show()
 
                         states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 
@@ -244,8 +239,8 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         test(reward_pars)
 
 
-if __name__ == '__main__':
-    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
-    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-         activation='relu', mod_n=0)
+# if __name__ == '__main__':
+#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
+#     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+#          activation='relu', mod_n=0)
