@@ -105,6 +105,7 @@ class GridManager:
         # the game can't possibly be over so return
         if self.curr_balls == 0:
             game.won = True
+            print("GANASTEEEEEEEEEEEE")
             return
         if self.rows < GAMEOVER_ROWS:
             return
