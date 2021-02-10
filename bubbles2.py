@@ -136,6 +136,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                 next_state = grid_manager.view(gun, game, reward_paras)
                 grid_manager.learnGrid(gun.loaded.color, gun.reload1.color)
                 if next_state is not None:
+                    grid_manager.checkGameOver(game)
                     reward = grid_manager.gameInfo(game, reward_paras)
                     # Save to experience replay.
                     buffer.add(state, action, reward, next_state, done)
