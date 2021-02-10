@@ -138,17 +138,17 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
                     if len(buffer) >= batch_size:
-                        print('Reward: ', reward)
-                        print('Episode Reward: ', ep_reward)
+                        # print('Reward: ', reward)
+                        # print('Episode Reward: ', ep_reward)
                         # Train neural network.
-                        plt.title('State')
-                        plt.imshow(state)
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('Next State, reward: ' + str(reward))
-                        plt.imshow(next_state)
-                        plt.colorbar()
-                        plt.show()
+                        # plt.title('State')
+                        # plt.imshow(state)
+                        # plt.colorbar()
+                        # plt.show()
+                        # plt.title('Next State, reward: ' + str(reward))
+                        # plt.imshow(next_state)
+                        # plt.colorbar()
+                        # plt.show()
 
                         states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 
