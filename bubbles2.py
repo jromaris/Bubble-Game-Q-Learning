@@ -59,7 +59,7 @@ def handle_game_events():
 
 # reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
 # epsilon_params : {constant: (False, 0), 'a': 0, 'k': 1, 'b': 1.5, 'q': 0.5, 'v': 0.12, 'm': 0, 'c': 1}
-def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92,
+def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92,
                 amount_frames=2000, activation='tanh', model_n=0):
 
     epsilon = 1
@@ -75,9 +75,12 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
 
     action = random.randint(0, len(angles) - 1)
     num_actions = len(angles)
-
-    main_nn = DQN(num_actions=num_actions, activate=activation)
-    target_nn = DQN(num_actions=num_actions, activate=activation)
+    if saved_mod is None:
+        main_nn = DQN(num_actions=num_actions, activate=activation)
+        target_nn = DQN(num_actions=num_actions, activate=activation)
+    else:
+        main_nn = saved_mod
+        target_nn = saved_mod
     optimizer = tf.keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
     mse = tf.keras.losses.Huber()
 
@@ -191,7 +194,7 @@ def train(epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discoun
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model16', compile=False)
+    main_nn = tf.keras.models.load_model('models/model30', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
@@ -230,10 +233,11 @@ def test(reward_paras):
 
 
 def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-         activation='tanh', mod_n=0):
+         activation='tanh', mod_n=0, saved_model=None):
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
-        train(epsilon_pars, reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
+        train(saved_mod=saved_model, epsilon_paras=epsilon_pars,
+              reward_paras=reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
               amount_frames=amount_frames, activation=activation, model_n=mod_n)
     else:
         test(reward_pars)
@@ -242,5 +246,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
 # if __name__ == '__main__':
 #     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
 #     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+#     # saved_model = tf.keras.models.load_model('models/model30', compile=False)
+#     saved_model = None
 #     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
 #          activation='relu', mod_n=0)
