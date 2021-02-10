@@ -68,7 +68,8 @@ def select_epsilon_greedy_action(main_nn, state, epsilon, num_actions):
 
 
 def do_trained_action(main_nn, state):
-    return tf.argmax(main_nn(state)[0]).numpy()
+    action_probs = main_nn(state, training=False)
+    return tf.argmax(action_probs[0]).numpy()
 
 
 def train_step(states, actions, rewards, next_states, dones):
