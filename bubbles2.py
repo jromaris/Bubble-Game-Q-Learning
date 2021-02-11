@@ -185,7 +185,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
             last_100_ep_rewards = last_100_ep_rewards[1:]
         last_100_ep_rewards.append(ep_reward)
 
-        if episode % 50 == 0:
+        if episode % 50 == 0 or episode == (num_episodes-1):
             print(f'Episode {episode}/{num_episodes}. Epsilon: {genlog_func(epsilon, epsilon_paras):.3f}. '
                   f'Reward in last 100 episodes: {np.mean(last_100_ep_rewards):.3f}')
             print('len buffer: ', len(buffer))
