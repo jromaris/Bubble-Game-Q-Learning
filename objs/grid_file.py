@@ -513,7 +513,7 @@ class GridManager:
             else:
                 reward -= 1 / score_diff
         elif self.curr_hit:
-            reward = reward_params['hit']
+            reward = reward_params['hit'] - self.cols / 10
         if game.won:
             reward = reward_params['game won']
 
