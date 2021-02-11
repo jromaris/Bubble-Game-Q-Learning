@@ -196,7 +196,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('models/model30', compile=False)
+    main_nn = tf.keras.models.load_model('model109', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]

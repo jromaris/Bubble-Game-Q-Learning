@@ -15,15 +15,16 @@ def DQN(num_actions, activate):
     """https://keras.io/examples/rl/deep_q_network_breakout/"""
     input_lay = layers.Input(shape=(GAMEOVER_ROWS + 3, 2*GRID_COLS + 1, 3,))
 
-    conv1 = layers.Conv2D(32, 4, strides=1, activation=activate)(input_lay)
+    conv1 = layers.Conv2D(32, 6, strides=1, activation=activate)(input_lay)
     conv2 = layers.Conv2D(64, 2, strides=1, activation=activate)(conv1)
     conv3 = layers.Conv2D(64, 2, strides=1, activation=activate)(conv2)
 
     flat = layers.Flatten()(conv3)
     dense1 = layers.Dense(512, activation=activate)(flat)
-    dense2 = layers.Dense(num_actions, activation='linear')(dense1)
+    dense2 = layers.Dense(512, activation=activate)(dense1)
+    dense3 = layers.Dense(num_actions, activation='linear')(dense2)
 
-    return keras.Model(inputs=input_lay, outputs=dense2)
+    return keras.Model(inputs=input_lay, outputs=dense3)
 
 
 class ReplayBuffer(object):

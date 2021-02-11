@@ -487,20 +487,20 @@ class GridManager:
                 if curr_color == BG_COLOR:
                     curr_color = BLACK
 
-                self.grid_state[row-row_n_appended][2 * col + augment][0] = curr_color[0]
-                self.grid_state[row-row_n_appended][2 * col + augment][1] = curr_color[1]
-                self.grid_state[row-row_n_appended][2 * col + augment][2] = curr_color[2]
-                self.grid_state[row-row_n_appended][2 * col + augment + 1][0] = curr_color[0]
-                self.grid_state[row-row_n_appended][2 * col + augment + 1][1] = curr_color[1]
-                self.grid_state[row-row_n_appended][2 * col + augment + 1][2] = curr_color[2]
+                self.grid_state[row-row_n_appended][2 * col + augment][0] = curr_color[0]/255
+                self.grid_state[row-row_n_appended][2 * col + augment][1] = curr_color[1]/255
+                self.grid_state[row-row_n_appended][2 * col + augment][2] = curr_color[2]/255
+                self.grid_state[row-row_n_appended][2 * col + augment + 1][0] = curr_color[0]/255
+                self.grid_state[row-row_n_appended][2 * col + augment + 1][1] = curr_color[1]/255
+                self.grid_state[row-row_n_appended][2 * col + augment + 1][2] = curr_color[2]/255
 
         for col in range(2*self.cols+1):
-            self.grid_state[-1][col][0] = nextBall[0]
-            self.grid_state[-1][col][1] = nextBall[1]
-            self.grid_state[-1][col][2] = nextBall[2]
-            self.grid_state[-2][col][0] = currBall[0]
-            self.grid_state[-2][col][1] = currBall[1]
-            self.grid_state[-2][col][2] = currBall[2]
+            self.grid_state[-1][col][0] = nextBall[0]/255
+            self.grid_state[-1][col][1] = nextBall[1]/255
+            self.grid_state[-1][col][2] = nextBall[2]/255
+            self.grid_state[-2][col][0] = currBall[0]/255
+            self.grid_state[-2][col][1] = currBall[1]/255
+            self.grid_state[-2][col][2] = currBall[2]/255
 
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):
