@@ -463,7 +463,6 @@ class GridManager:
                         del self.paths[0]
 
     def learnGrid(self, currBall, nextBall):
-        self.curr_balls = 0
 
         if self.appended_top:
             row_n_appended = 1
