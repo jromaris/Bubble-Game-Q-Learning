@@ -62,6 +62,7 @@ def handle_game_events():
 def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=32, discount=0.92,
                 amount_frames=2000, activation='tanh', model_n=0):
 
+    all_rewards = np.zeros(num_episodes)
     epsilon = 1
 
     buffer = ReplayBuffer(100000+1)
@@ -138,6 +139,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                 if next_state is not None:
                     grid_manager.checkGameOver(game)
                     reward = grid_manager.gameInfo(game, reward_paras)
+                    all_rewards[episode] = reward
                     # Save to experience replay.
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
@@ -163,6 +165,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                         cur_frame += 1
                         # Copy main_nn weights to target_nn.
                         if cur_frame % amount_frames == 0:
+                            print("VAS ", cur_frames, " FRAMES")
                             target_nn.set_weights(main_nn.get_weights())
 
             gun.draw_bullets()   # Draw and update bullet and reloads
@@ -192,11 +195,13 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
             print('len buffer: ', len(buffer))
 
     main_nn.save(MODELS_PATH + '/model' + str(model_n))
+
     del main_nn
+    return all_rewards
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('model109', compile=False)
+    main_nn = tf.keras.models.load_model('model215', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
@@ -238,9 +243,10 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
          activation='tanh', mod_n=0, saved_model=None):
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
-        train(saved_mod=saved_model, epsilon_paras=epsilon_pars,
+        train_rewards = train(saved_mod=saved_model, epsilon_paras=epsilon_pars,
               reward_paras=reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
               amount_frames=amount_frames, activation=activation, model_n=mod_n)
+        return train_rewards
     else:
         test(reward_pars)
 
