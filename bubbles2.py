@@ -144,7 +144,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
                     all_rewards[episode] = ep_reward
-                    
+
                     if len(buffer) >= batch_size:
                         #print('Reward: ', reward)
                         #print('Episode Reward: ', ep_reward)
@@ -166,7 +166,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                         cur_frame += 1
                         # Copy main_nn weights to target_nn.
                         if cur_frame % amount_frames == 0:
-                            print("VAS ", cur_frames, " FRAMES")
+                            print("VAS ", cur_frame, " FRAMES")
                             target_nn.set_weights(main_nn.get_weights())
 
             gun.draw_bullets()   # Draw and update bullet and reloads
