@@ -75,6 +75,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
     print('angles:', angles)
 
     action = random.randint(0, len(angles) - 1)
+    prev_action = action
     num_actions = len(angles)
     if saved_mod is None:
         main_nn = DQN(num_actions=num_actions, activate=activation)
@@ -130,6 +131,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
                 state_in = tf.convert_to_tensor(state)
                 state_in = tf.expand_dims(state_in, 0)
+                prev_action = action
                 action = select_epsilon_greedy_action(main_nn, state_in,
                                                       genlog_func(epsilon, epsilon_paras), num_actions)
 
@@ -141,7 +143,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                     reward = grid_manager.gameInfo(game, reward_paras)
 
                     # Save to experience replay.
-                    buffer.add(state, action, reward, next_state, done)
+                    buffer.add(state, prev_action, reward, next_state, done)
                     ep_reward += reward
                     all_rewards[episode] = ep_reward
 
@@ -153,7 +155,8 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                         #plt.imshow(state)
                         #plt.colorbar()
                         #plt.show()
-                        #plt.title('Next State, reward: ' + str(reward) + "CurrBalls" + str(grid_manager.curr_balls))
+                        #plt.title('Next State, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
+                        #           + ', action: ' + str(prev_action))
                         #plt.imshow(next_state)
                         #plt.colorbar()
                         #plt.show()
