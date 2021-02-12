@@ -139,11 +139,12 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                 if next_state is not None:
                     grid_manager.checkGameOver(game)
                     reward = grid_manager.gameInfo(game, reward_paras)
-                    all_rewards[episode] = reward
+
                     # Save to experience replay.
                     buffer.add(state, action, reward, next_state, done)
                     ep_reward += reward
-
+                    all_rewards[episode] = ep_reward
+                    
                     if len(buffer) >= batch_size:
                         #print('Reward: ', reward)
                         #print('Episode Reward: ', ep_reward)
