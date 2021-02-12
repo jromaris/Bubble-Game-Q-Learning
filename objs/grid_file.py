@@ -15,7 +15,7 @@ class GridManager:
         if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
             self.myfont = pg.font.SysFont("Comic Sans MS", 7)  # pick a font you have and set its size
         self.rows = GRID_ROWS  # Initialize the amount of rows
-        self.cols = GRID_COLS  # Initialize the amount if cols
+        self.cols = GRID_COLS  # Initialize the amount of cols
         self.even_offset = True  # Which rows (even or odd) are offset
         self.appended_top = False
         # this will contain the bubbles that will be checked for collisions
@@ -82,8 +82,8 @@ class GridManager:
                 else:
                     self.curr_hit = False
 
-            self.appended_top = (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0)
-            self.updateRows()
+            # self.appended_top = (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0)
+            # self.updateRows()
             self.popCluster(bubble, game)
             self.findTargets()
             self.checkGameOver(game)
