@@ -70,7 +70,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
     # Start training. Play game once and then train with a batch.
     last_100_ep_rewards = []
     limit_a, limit_b = 15, 165
-    angle_step = 7.5
+    angle_step = 2
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
     print('angles:', angles)
 
@@ -205,7 +205,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('model802', compile=False)
+    main_nn = tf.keras.models.load_model('model215', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = 0.5
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
