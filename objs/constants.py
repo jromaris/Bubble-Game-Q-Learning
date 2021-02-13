@@ -4,12 +4,9 @@ import pygame as pg
 # visualizations
 VISUALIZATIONS = False
 SHOW_COMRADES = False
-SHOW_TARGETS = False
-SHOW_HITBOXES = False
 SHOW_ROOT_PATH = False
 
 APPEND_COUNTDOWN = 40
-
 
 DISP_W = 900
 DISP_H = 600
@@ -45,7 +42,6 @@ VIOLET = (127, 0, 255)
 
 # Ball colours
 # BUBBLE_COLORS = [RED, YELLOW, GREEN, BLUE, VIOLET]
-BUBBLE_COLORS = [RED, GREEN, BLUE]
 BG_COLOR = 'No color'
 
 AIM_LENGTH = 200

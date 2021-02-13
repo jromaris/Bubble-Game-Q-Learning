@@ -13,7 +13,11 @@ container = dict()
 
 def DQN(num_actions, activate):
     """https://keras.io/examples/rl/deep_q_network_breakout/"""
+<<<<<<< Updated upstream
     input_lay = layers.Input(shape=(GAMEOVER_ROWS + 2, 2*GRID_COLS + 1, 3,))
+=======
+    input_lay = layers.Input(shape=(GAMEOVER_ROWS + 3, 2*GRID_COLS + 1, 5,))
+>>>>>>> Stashed changes
 
     conv1 = layers.Conv2D(32, 4, strides=1, activation=activate)(input_lay)
     conv2 = layers.Conv2D(64, 2, strides=1, activation=activate)(conv1)
