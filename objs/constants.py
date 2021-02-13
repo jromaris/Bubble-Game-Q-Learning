@@ -4,6 +4,8 @@ import pygame as pg
 # visualizations
 VISUALIZATIONS = False
 SHOW_COMRADES = False
+SHOW_TARGETS = True
+SHOW_HITBOXES = True
 SHOW_ROOT_PATH = False
 
 APPEND_COUNTDOWN = 40
@@ -42,6 +44,7 @@ VIOLET = (127, 0, 255)
 
 # Ball colours
 # BUBBLE_COLORS = [RED, YELLOW, GREEN, BLUE, VIOLET]
+BUBBLE_COLORS = [RED, GREEN, BLUE,YELLOW]
 BG_COLOR = 'No color'
 
 AIM_LENGTH = 200
@@ -60,7 +63,10 @@ GRID_COLS = 20
 GRID_ROWS = 10
 GAMEOVER_ROWS = 20
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 HITBOX_SIZE = (BUBBLE_RADIUS * 2) - 4
 
 # Game environment constants
