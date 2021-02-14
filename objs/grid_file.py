@@ -60,12 +60,8 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-<<<<<<< Updated upstream
-        self.grid_state = np.zeros((GAMEOVER_ROWS+2, GRID_COLS*2+1, 3))
-=======
         self.grid_state = np.zeros((GAMEOVER_ROWS+3, GRID_COLS*2+1, 5))
         self.grid_state[..., 4] = np.ones((GAMEOVER_ROWS+3, GRID_COLS*2+1))
->>>>>>> Stashed changes
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
@@ -476,6 +472,7 @@ class GridManager:
         self.appended_top = False
 
         for row in range(self.rows):
+
             self.grid_state[row - row_n_appended][0][0] = 0
             self.grid_state[row - row_n_appended][0][1] = 0
             self.grid_state[row - row_n_appended][0][2] = 0
@@ -495,25 +492,7 @@ class GridManager:
             for col in range(self.cols):
                 color_toset = [0, 0, 0, 0, 0]
                 curr_color = self.grid[row][col].color
-<<<<<<< Updated upstream
-                if curr_color == BG_COLOR:
-                    curr_color = BLACK
 
-                self.grid_state[row-row_n_appended][2 * col + augment][0] = curr_color[0]
-                self.grid_state[row-row_n_appended][2 * col + augment][1] = curr_color[1]
-                self.grid_state[row-row_n_appended][2 * col + augment][2] = curr_color[2]
-                self.grid_state[row-row_n_appended][2 * col + augment + 1][0] = curr_color[0]
-                self.grid_state[row-row_n_appended][2 * col + augment + 1][1] = curr_color[1]
-                self.grid_state[row-row_n_appended][2 * col + augment + 1][2] = curr_color[2]
-
-        for col in range(2*self.cols+1):
-            self.grid_state[-1][col][0] = nextBall[0]
-            self.grid_state[-1][col][1] = nextBall[1]
-            self.grid_state[-1][col][2] = nextBall[2]
-            self.grid_state[-2][col][0] = currBall[0]
-            self.grid_state[-2][col][1] = currBall[1]
-            self.grid_state[-2][col][2] = currBall[2]
-=======
                 if curr_color == RED:
                     color_toset[0] = 1
                 elif curr_color == GREEN:
@@ -571,7 +550,6 @@ class GridManager:
             self.grid_state[-2][col][2] = curball_color_toset[2]
             self.grid_state[-2][col][3] = curball_color_toset[3]
             self.grid_state[-2][col][4] = curball_color_toset[4]
->>>>>>> Stashed changes
 
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):

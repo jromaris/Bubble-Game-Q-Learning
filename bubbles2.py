@@ -71,11 +71,9 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
     # Start training. Play game once and then train with a batch.
     last_100_ep_rewards = []
     limit_a, limit_b = 15, 165
-<<<<<<< Updated upstream
-    angle_step = 0.5
-=======
+
     angle_step = angle_resolution
->>>>>>> Stashed changes
+
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
     print('angles:', angles)
 
@@ -149,80 +147,62 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                     # Save to experience replay.
                     buffer.add(state, prev_action, reward, next_state, done)
                     ep_reward += reward
-                    if len(buffer) >= batch_size:
-<<<<<<< Updated upstream
-                        # print('Reward: ', reward)
-                        # print('Episode Reward: ', ep_reward)
-                        # Train neural network.
-                        # plt.title('State')
-                        # plt.imshow(state)
-                        # plt.colorbar()
-                        # plt.show()
-                        # plt.title('Next State, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
-                        #           + ', action: ' + str(prev_action))
-                        # plt.imshow(next_state)
-                        # plt.colorbar()
-                        # plt.show()
-=======
-                        #print('Reward: ', reward)
-                        #print('Episode Reward: ', ep_reward)
-                        #Train neural network.
-                        plt.title('State Rojo' + "CurrBalls" + str(grid_manager.curr_balls))
-                        plt.imshow(state[..., 0])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('State Verde' + "CurrBalls" + str(grid_manager.curr_balls))
-                        plt.imshow(state[..., 1])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('State Azul' + "CurrBalls" + str(grid_manager.curr_balls))
-                        plt.imshow(state[..., 2])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('State Amarillo' + "CurrBalls" + str(grid_manager.curr_balls))
-                        plt.imshow(state[..., 3])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('State Fondo' + "CurrBalls" + str(grid_manager.curr_balls))
-                        plt.imshow(state[..., 4])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('Next State Rojo, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
-                                   + ', action: ' + str(prev_action))
-                        plt.imshow(next_state[..., 0])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('Next State Verde, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
-                                   + ', action: ' + str(prev_action))
-                        plt.imshow(next_state[..., 1])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('Next State Blue, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
-                                   + ', action: ' + str(prev_action))
-                        plt.imshow(next_state[..., 2])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('Next State Amarillo, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
-                                   + ', action: ' + str(prev_action))
-                        plt.imshow(next_state[..., 3])
-                        plt.colorbar()
-                        plt.show()
-                        plt.title('Next State Fondo, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
-                                   + ', action: ' + str(prev_action))
-                        plt.imshow(next_state[..., 4])
-                        plt.colorbar()
-                        plt.show()
->>>>>>> Stashed changes
+                    #if len(buffer) >= batch_size:
+                    plt.title('State Rojo' + "CurrBalls" + str(grid_manager.curr_balls))
+                    plt.imshow(state[..., 0])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('State Verde' + "CurrBalls" + str(grid_manager.curr_balls))
+                    plt.imshow(state[..., 1])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('State Azul' + "CurrBalls" + str(grid_manager.curr_balls))
+                    plt.imshow(state[..., 2])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('State Amarillo' + "CurrBalls" + str(grid_manager.curr_balls))
+                    plt.imshow(state[..., 3])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('State Fondo' + "CurrBalls" + str(grid_manager.curr_balls))
+                    plt.imshow(state[..., 4])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('Next State Rojo, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
+                                + ', action: ' + str(prev_action))
+                    plt.imshow(next_state[..., 0])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('Next State Verde, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
+                               + ', action: ' + str(prev_action))
+                    plt.imshow(next_state[..., 1])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('Next State Blue, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
+                               + ', action: ' + str(prev_action))
+                    plt.imshow(next_state[..., 2])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('Next State Amarillo, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
+                               + ', action: ' + str(prev_action))
+                    plt.imshow(next_state[..., 3])
+                    plt.colorbar()
+                    plt.show()
+                    plt.title('Next State Fondo, reward: ' + str(reward) + ', rows: ' + str(grid_manager.rows)
+                               + ', action: ' + str(prev_action))
+                    plt.imshow(next_state[..., 4])
+                    plt.colorbar()
+                    plt.show()
 
-                        states, actions, rewards, next_states, dones = buffer.sample(batch_size)
+                    states, actions, rewards, next_states, dones = buffer.sample(batch_size)
 
-                        train_step(states=states, actions=actions, rewards=rewards, next_states=next_states,
-                                       dones=dones)
+                    train_step(states=states, actions=actions, rewards=rewards, next_states=next_states,
+                                   dones=dones)
 
-                        cur_frame += 1
-                        # Copy main_nn weights to target_nn.
-                        if cur_frame % amount_frames == 0:
-                            target_nn.set_weights(main_nn.get_weights())
+                    cur_frame += 1
+                    # Copy main_nn weights to target_nn.
+                    if cur_frame % amount_frames == 0:
+                        target_nn.set_weights(main_nn.get_weights())
 
             gun.draw_bullets()   # Draw and update bullet and reloads
 
@@ -255,11 +235,9 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
 
 def test(reward_paras):
-<<<<<<< Updated upstream
-    main_nn = tf.keras.models.load_model('models/model30', compile=False)
-=======
+
     main_nn = tf.keras.models.load_model('model800', compile=False)
->>>>>>> Stashed changes
+
     limit_a, limit_b = 15, 165
     angle_step = angle_resolution
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
@@ -307,15 +285,11 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
     else:
         test(reward_pars)
 
-<<<<<<< Updated upstream
+if __name__ == '__main__':
 
-# if __name__ == '__main__':
-=======
-#if __name__ == '__main__':
->>>>>>> Stashed changes
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
-#     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     # saved_model = tf.keras.models.load_model('models/model30', compile=False)
-#     saved_model = None
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-#        activation='relu', mod_n=0)
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
+    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+    # saved_model = tf.keras.models.load_model('models/model30', compile=False)
+    saved_model = None
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+        activation='relu', mod_n=0)
