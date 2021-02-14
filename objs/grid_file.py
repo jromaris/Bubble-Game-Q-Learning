@@ -121,8 +121,8 @@ class GridManager:
         # Get the bullet and 'see' its future position
         # this is so that when the bullet stops existing and turns into the grid, it looks more smooth
         bullet_x, bullet_y = bullet.pos
-        bullet_x += 0.5 * bullet.dx
-        bullet_y += 0.5 * bullet.dy
+        bullet_x += 0.25 * bullet.dx
+        bullet_y += 0.25 * bullet.dy
 
         # Check every target and see if the bullet has collided with it
         for target in self.targets:

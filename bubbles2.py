@@ -13,6 +13,7 @@ from collections import deque
 import pickle
 import objs.q_learning
 
+angle_resolution = 7.5
 
 def reset_game(reward_paras, initial_grid):
     # Create background
@@ -70,7 +71,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
     # Start training. Play game once and then train with a batch.
     last_100_ep_rewards = []
     limit_a, limit_b = 15, 165
-    angle_step = 2
+    angle_step = angle_resolution
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
     print('angles:', angles)
 
@@ -205,9 +206,9 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('model215', compile=False)
+    main_nn = tf.keras.models.load_model('model800', compile=False)
     limit_a, limit_b = 15, 165
-    angle_step = 0.5
+    angle_step = angle_resolution
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
 
     game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=None)
@@ -242,7 +243,6 @@ def test(reward_paras):
 
         done = game.over or game.won
 
-
 def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
          activation='tanh', mod_n=0, saved_model=None):
     # genlogistic(epsilon_pars)
@@ -253,7 +253,6 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         return train_rewards
     else:
         test(reward_pars)
-
 
 #if __name__ == '__main__':
 #     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
