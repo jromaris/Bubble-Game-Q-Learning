@@ -214,7 +214,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
             done = game.over or game.won
         if SAVE_SAMPLES:
             pickle.dump(obj=last_plays.popleft(),
-                        file=open('drive/Shareddrives/Redes/plays/savedmodel' + str(episode) + '.p', 'wb'))
+                        file=open('drive/MyDrive/Redes Neuronales' + str(episode) + '.p', 'wb'))
 
         print(f'Episode {episode}/{num_episodes}')
         print('\tgenlog_func(Epsilon): ', genlog_func(epsilon, epsilon_paras))
