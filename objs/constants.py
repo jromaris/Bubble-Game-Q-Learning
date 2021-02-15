@@ -20,7 +20,7 @@ SAVE_SAMPLES = False
 USE_SAMPLES = False
 
 TRAIN_TEST = True
-TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
+TRAIN_TYPE = 'graphic'	 # 'graphic' or 'logic'
 MODELS_PATH = 'drive/MyDrive/Redes Neuronales'
 
 if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):

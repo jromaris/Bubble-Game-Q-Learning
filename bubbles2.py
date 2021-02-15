@@ -65,7 +65,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                 amount_frames=2000, activation='tanh', model_n=0):
 
     epsilon = 1
-
+    all_rewards = np.zeros(num_episodes)
     buffer = ReplayBuffer(100000+1)
     cur_frame = 0
     # Start training. Play game once and then train with a batch.
@@ -147,6 +147,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
                     # Save to experience replay.
                     buffer.add(state, prev_action, reward, next_state, done)
                     ep_reward += reward
+                    all_rewards[episode] = ep_reward
                     #if len(buffer) >= batch_size:
                     # plt.title('State Rojo' + "CurrBalls" + str(grid_manager.curr_balls))
                     # plt.imshow(state[..., 0])
@@ -232,6 +233,8 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
     main_nn.save(MODELS_PATH + '/model' + str(model_n))
     del main_nn
+    return all_rewards
+
 
 
 def test(reward_paras):
@@ -279,17 +282,18 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
          activation='tanh', mod_n=0, saved_model=None):
     # genlogistic(epsilon_pars)
     if TRAIN_TEST:
-        train(saved_mod=saved_model, epsilon_paras=epsilon_pars,
+        train_rewards = train(saved_mod=saved_model, epsilon_paras=epsilon_pars,
               reward_paras=reward_pars, num_episodes=num_episodes, batch_size=batch_size, discount=discount,
               amount_frames=amount_frames, activation=activation, model_n=mod_n)
+        return train_rewards
     else:
         test(reward_pars)
 
-# if __name__ == '__main__':
-# 
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
-#     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     # saved_model = tf.keras.models.load_model('models/model30', compile=False)
-#     saved_model = None
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-#         activation='relu', mod_n=0)
+if __name__ == '__main__':
+ 
+     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
+     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+     # saved_model = tf.keras.models.load_model('models/model30', compile=False)
+     saved_model = None
+     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+         activation='relu', mod_n=0)
