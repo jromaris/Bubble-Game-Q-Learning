@@ -83,19 +83,19 @@ class GridManager:
                 else:
                     self.curr_hit = False
 
-            self.appended_top = (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0)
+            #self.appended_top = (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0)
             self.updateRows()
             self.popCluster(bubble, game)
             self.findTargets()
             self.checkGameOver(game)
             self.collided = False
-            self.learnGrid(gun.loaded.color, gun.reload1.color)
+            self.learnGrid(gun.loaded.color, gun.reload1.color, gun.reload2.color, gun.reload3.color)
             self.gameInfo(game, reward_params)
 
         # No matter what happens, update the grid
         # draws the bubbles, animations, visualizations
             return self.grid_state.copy()
-        self.learnGrid(gun.loaded.color, gun.reload1.color)
+        self.learnGrid(gun.loaded.color, gun.reload1.color, gun.reload2.color, gun.reload3.color)
         if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
             self.draw()
 
@@ -192,8 +192,8 @@ class GridManager:
     def updateRows(self):
 
         # after 'APPEND_COUNTDOWN' of collisions, add a row to the top
-        if (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0):
-            self.appendTop()
+        #if (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0):
+        #    self.appendTop()
 
         # if theres an existent bubble in the very last row, add a new row to the bottom
         # A bullet takes the place of a non-existent bubble so there should always be an empty
@@ -463,7 +463,7 @@ class GridManager:
                     if not self.paths[0]:
                         del self.paths[0]
 
-    def learnGrid(self, currBall, nextBall):
+    def learnGrid(self, currBall, nextBall,thirdBall,fourthBall):
 
         if self.appended_top:
             row_n_appended = 1
@@ -539,7 +539,42 @@ class GridManager:
         elif nextBall == BG_COLOR:
             nextball_color_toset[4] = 1
 
+        thirdball_color_toset = [0, 0, 0, 0, 0]
+        if thirdBall == RED:
+            thirdball_color_toset[0] = 1
+        elif thirdBall == GREEN:
+            thirdball_color_toset[1] = 1
+        elif thirdBall == BLUE:
+            thirdball_color_toset[2] = 1
+        elif thirdBall == YELLOW:
+            thirdball_color_toset[3] = 1
+        elif thirdBall == BG_COLOR:
+            thirdball_color_toset[4] = 1
+
+        fourthball_color_toset = [0, 0, 0, 0, 0]
+        if fourthBall == RED:
+            fourthball_color_toset[0] = 1
+        elif fourthBall == GREEN:
+            fourthball_color_toset[1] = 1
+        elif fourthBall == BLUE:
+            fourthball_color_toset[2] = 1
+        elif fourthBall == YELLOW:
+            fourthball_color_toset[3] = 1
+        elif fourthBall == BG_COLOR:
+            fourthball_color_toset[4] = 1    
+
         for col in range(2*self.cols+1):
+            #self.grid_state[-1][col][0] = fourthball_color_toset[0]
+            #self.grid_state[-1][col][1] = fourthball_color_toset[1]
+            #self.grid_state[-1][col][2] = fourthball_color_toset[2]
+            #self.grid_state[-1][col][3] = fourthball_color_toset[3]
+            #self.grid_state[-1][col][4] = fourthball_color_toset[4]
+            #self.grid_state[-2][col][0] = thirdball_color_toset[0]
+            #self.grid_state[-2][col][1] = thirdball_color_toset[1]
+            #self.grid_state[-2][col][2] = thirdball_color_toset[2]
+            #self.grid_state[-2][col][3] = thirdball_color_toset[3]
+            #self.grid_state[-2][col][4] = thirdball_color_toset[4]            
+
             self.grid_state[-1][col][0] = nextball_color_toset[0]
             self.grid_state[-1][col][1] = nextball_color_toset[1]
             self.grid_state[-1][col][2] = nextball_color_toset[2]
@@ -551,21 +586,22 @@ class GridManager:
             self.grid_state[-2][col][3] = curball_color_toset[3]
             self.grid_state[-2][col][4] = curball_color_toset[4]
 
+
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):
         score_diff = game.score - game.prev_score
         reward = 0
         if game.over:
-            reward = reward_params['game over'] - self.rows / 10
+            reward = reward_params['game over']
         elif not self.curr_hit:
-            reward = reward_params['no hit'] - self.rows / 10
+            reward = reward_params['no hit'] - self.rows/GAMEOVER_ROWS
         elif self.curr_hit and score_diff > 0:
             if reward_params['balls_down_positive']:
                 reward += score_diff
             else:
                 reward -= 1 / score_diff
         elif self.curr_hit:
-            reward = reward_params['hit'] - self.rows / 10
+            reward = reward_params['hit'] - self.rows/GAMEOVER_ROWS
         if game.won:
             reward = reward_params['game won']
         return reward
