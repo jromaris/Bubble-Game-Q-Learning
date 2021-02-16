@@ -20,7 +20,7 @@ SAVE_SAMPLES = False
 USE_SAMPLES = False
 
 TRAIN_TEST = True
-TRAIN_TYPE = 'graphic'	 # 'graphic' or 'logic'
+TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
 MODELS_PATH = 'drive/Shareddrives/Redes/Models'
 
 if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
