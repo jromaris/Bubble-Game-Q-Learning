@@ -1,7 +1,9 @@
-# Bubbles 2.0
-A bubble shooter game written with python and pygame.
-Cheats: "explosion", "god", "blue", "violet", "red", "green", "yellow"
-It involves use of object oriented programming, graphs, dept-first search, and state machines.
+# Bubbles 2.0 - Deep Reinforcement Learning
+
+A bubble shooter game that plays itself. Written with python and pygame.
+
+For some theoretical background and presentations of the results, please take a look at the Report
+`Q Learning Bubbles!.ipynb`
 
 ![Screenshot](/images/Screenshot.PNG?raw=true "Screenshot")
 
