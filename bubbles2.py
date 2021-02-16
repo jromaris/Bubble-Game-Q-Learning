@@ -138,7 +138,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
             else:
                 next_state = grid_manager.view(gun, game, reward_paras)
-                grid_manager.learnGrid(gun.loaded.color, gun.reload1.color)
+                grid_manager.learnGrid(gun.loaded.color, gun.reload1.color, gun.reload2.color, gun.reload3.color)
                 if next_state is not None:
                     grid_manager.checkGameOver(game)
                     reward = grid_manager.gameInfo(game, reward_paras)
@@ -257,7 +257,7 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
 #if __name__ == '__main__':
 #     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
 #     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#     # saved_model = tf.keras.models.load_model('models/model30', compile=False)
+     # saved_model = tf.keras.models.load_model('models/model30', compile=False)
 #     saved_model = None
 #     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
 #          activation='relu', mod_n=0)
