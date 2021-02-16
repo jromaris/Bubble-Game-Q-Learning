@@ -21,7 +21,7 @@ USE_SAMPLES = False
 
 TRAIN_TEST = True
 TRAIN_TYPE = 'logic'	 # 'graphic' or 'logic'
-MODELS_PATH = 'drive/MyDrive/Redes Neuronales'
+MODELS_PATH = 'drive/MyDrive/Manuel'
 
 if not (TRAIN_TYPE == 'logic' and TRAIN_TEST):
     pg.init()
