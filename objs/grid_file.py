@@ -82,7 +82,7 @@ class GridManager:
                 else:
                     self.curr_hit = False
 
-            self.appended_top = (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0)
+            #self.appended_top = (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0)
             self.updateRows()
             self.popCluster(bubble, game)
             self.findTargets()
