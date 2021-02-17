@@ -192,8 +192,8 @@ class GridManager:
     def updateRows(self):
 
         # after 'APPEND_COUNTDOWN' of collisions, add a row to the top
-        if (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0):
-            self.appendTop()
+        #if (self.collision_counter % APPEND_COUNTDOWN == 0) and (self.collision_counter != 0):
+        #    self.appendTop()
 
         # if theres an existent bubble in the very last row, add a new row to the bottom
         # A bullet takes the place of a non-existent bubble so there should always be an empty
