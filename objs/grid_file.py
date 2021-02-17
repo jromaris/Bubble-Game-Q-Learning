@@ -594,14 +594,14 @@ class GridManager:
         if game.over:
             reward = reward_params['game over']
         elif not self.curr_hit:
-            reward = reward_params['no hit'] - self.rows
+            reward = reward_params['no hit'] - self.rows/GAMEOVER_ROWS
         elif self.curr_hit and score_diff > 0:
             if reward_params['balls_down_positive']:
                 reward += score_diff
             else:
                 reward -= 1 / score_diff
         elif self.curr_hit:
-            reward = reward_params['hit'] - self.rows
+            reward = reward_params['hit'] - self.rows/GAMEOVER_ROWS
         if game.won:
             reward = reward_params['game won']
         return reward
