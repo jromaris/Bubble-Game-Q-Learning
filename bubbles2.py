@@ -14,7 +14,7 @@ import pickle
 import objs.q_learning
 
 
-angle_resolution = 7.5
+angle_resolution = 3.75
 
 def reset_game(reward_paras, initial_grid):
     # Create background
@@ -238,7 +238,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
 def test(reward_paras):
 
-    main_nn = tf.keras.models.load_model('model4002', compile=False)
+    main_nn = tf.keras.models.load_model('model23', compile=False)
 
     limit_a, limit_b = 15, 165
     angle_step = angle_resolution
@@ -247,6 +247,9 @@ def test(reward_paras):
     game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=None)
 
     ep_reward, done = 0, False
+    acs = 0
+    win = False
+    points = 0
     while not done:  # or won game
         handle_game_events()
 
@@ -270,12 +273,15 @@ def test(reward_paras):
 
         game.drawScore()  # draw score
 
-        pg.display.update()
+        #pg.display.update()
 
-        clock.tick(20)  # 60 FPS
-
+        #clock.tick(20000)  # 60 FPS
+        acs+= 1
+        points = game.score
         done = game.over or game.won
-
+        if game.won:
+            win = True
+    return acs, points, win
 
 def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
          activation='tanh', mod_n=0, saved_model=None):
@@ -286,13 +292,25 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
               amount_frames=amount_frames, activation=activation, model_n=mod_n)
         return train_rewards
     else:
-        test(reward_pars)
+        test_num =100
+        test_data = np.zeros((test_num,3))
+        for i in range(test_num):
+            print("Vas por Partida Nº"+str(i))
+            acs, win, scor = test(reward_pars)
+            test_data[i][0]= acs
+            test_data[i][1]= win
+            test_data[i][2]= scor
+        plt.hist(test_data[...,0], bins = 10)
+        plt.show()
+        plt.hist(test_data[...,1], bins = 10)
+        plt.show()
+        print("WON"+str(np.sum([...,2])+"games"))
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
  
-#    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
-#    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-#    # saved_model = tf.keras.models.load_model('models/model30', compile=False)
-#    saved_model = None
-#    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-#        activation='relu', mod_n=0)
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
+    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+    # saved_model = tf.keras.models.load_model('models/model30', compile=False)
+    saved_model = None
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+        activation='relu', mod_n=0)
