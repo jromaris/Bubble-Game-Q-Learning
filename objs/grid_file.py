@@ -60,8 +60,8 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-        self.grid_state = np.zeros((GAMEOVER_ROWS+5, GRID_COLS*2+1, 5))
-        self.grid_state[..., 4] = np.ones((GAMEOVER_ROWS+5, GRID_COLS*2+1))
+        self.grid_state = np.zeros((GAMEOVER_ROWS+3, GRID_COLS*2+1, 5))
+        self.grid_state[..., 4] = np.ones((GAMEOVER_ROWS+3, GRID_COLS*2+1))
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
@@ -564,27 +564,27 @@ class GridManager:
             fourthball_color_toset[4] = 1    
 
         for col in range(2*self.cols+1):
-            self.grid_state[-1][col][0] = fourthball_color_toset[0]
-            self.grid_state[-1][col][1] = fourthball_color_toset[1]
-            self.grid_state[-1][col][2] = fourthball_color_toset[2]
-            self.grid_state[-1][col][3] = fourthball_color_toset[3]
-            self.grid_state[-1][col][4] = fourthball_color_toset[4]
-            self.grid_state[-2][col][0] = thirdball_color_toset[0]
-            self.grid_state[-2][col][1] = thirdball_color_toset[1]
-            self.grid_state[-2][col][2] = thirdball_color_toset[2]
-            self.grid_state[-2][col][3] = thirdball_color_toset[3]
-            self.grid_state[-2][col][4] = thirdball_color_toset[4]            
+            #self.grid_state[-1][col][0] = fourthball_color_toset[0]
+            #self.grid_state[-1][col][1] = fourthball_color_toset[1]
+            #self.grid_state[-1][col][2] = fourthball_color_toset[2]
+            #self.grid_state[-1][col][3] = fourthball_color_toset[3]
+            #self.grid_state[-1][col][4] = fourthball_color_toset[4]
+            #self.grid_state[-2][col][0] = thirdball_color_toset[0]
+            #self.grid_state[-2][col][1] = thirdball_color_toset[1]
+            #self.grid_state[-2][col][2] = thirdball_color_toset[2]
+            #self.grid_state[-2][col][3] = thirdball_color_toset[3]
+            #self.grid_state[-2][col][4] = thirdball_color_toset[4]            
 
-            self.grid_state[-3][col][0] = nextball_color_toset[0]
-            self.grid_state[-3][col][1] = nextball_color_toset[1]
-            self.grid_state[-3][col][2] = nextball_color_toset[2]
-            self.grid_state[-3][col][3] = nextball_color_toset[3]
-            self.grid_state[-3][col][4] = nextball_color_toset[4]
-            self.grid_state[-4][col][0] = curball_color_toset[0]
-            self.grid_state[-4][col][1] = curball_color_toset[1]
-            self.grid_state[-4][col][2] = curball_color_toset[2]
-            self.grid_state[-4][col][3] = curball_color_toset[3]
-            self.grid_state[-4][col][4] = curball_color_toset[4]
+            self.grid_state[-1][col][0] = nextball_color_toset[0]
+            self.grid_state[-1][col][1] = nextball_color_toset[1]
+            self.grid_state[-1][col][2] = nextball_color_toset[2]
+            self.grid_state[-1][col][3] = nextball_color_toset[3]
+            self.grid_state[-1][col][4] = nextball_color_toset[4]
+            self.grid_state[-2][col][0] = curball_color_toset[0]
+            self.grid_state[-2][col][1] = curball_color_toset[1]
+            self.grid_state[-2][col][2] = curball_color_toset[2]
+            self.grid_state[-2][col][3] = curball_color_toset[3]
+            self.grid_state[-2][col][4] = curball_color_toset[4]
 
 
     # Return nextState and reward for current action
