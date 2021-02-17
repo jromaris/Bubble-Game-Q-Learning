@@ -265,7 +265,7 @@ def test(reward_paras):
             state_in = tf.expand_dims(state, axis=0)
             action = do_trained_action(main_nn, state_in)
             # print('\tAction: ', action)
-
+            #action = np.random.randint(40)
             gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
             gun.fire()
 
@@ -281,6 +281,7 @@ def test(reward_paras):
         done = game.over or game.won
         if game.won:
             win = True
+            print("GANASTE")
     return acs, points, win
 
 def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
@@ -293,18 +294,21 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
         return train_rewards
     else:
         test_num =100
+        ganado = 0
         test_data = np.zeros((test_num,3))
         for i in range(test_num):
+            print(ganado)
             print("Vas por Partida Nº"+str(i))
-            acs, win, scor = test(reward_pars)
+            acs, scor, win = test(reward_pars)
             test_data[i][0]= acs
-            test_data[i][1]= win
+            if win:
+                ganado+= 1
             test_data[i][2]= scor
         plt.hist(test_data[...,0], bins = 10)
         plt.show()
         plt.hist(test_data[...,1], bins = 10)
         plt.show()
-        print("WON"+str(np.sum([...,2])+"games"))
+        print("GANASTE "+str(ganado))
 
 if __name__ == '__main__':
  
