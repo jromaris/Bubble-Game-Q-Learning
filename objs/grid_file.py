@@ -60,7 +60,7 @@ class GridManager:
         self.prev_time = 0  # used for the paths (root search) animation
 
         # grids for reinforced learning
-        self.grid_state = np.zeros((GAMEOVER_ROWS+5, GRID_COLS*2+1, 3))
+        self.grid_state = np.zeros((GAMEOVER_ROWS+3, GRID_COLS*2+1, 3))
 
     # This is the main function of the manager, it handles the main logic of the grid
     def view(self, gun, game, reward_params):
@@ -495,18 +495,18 @@ class GridManager:
                 self.grid_state[row-row_n_appended][2 * col + augment + 1][2] = curr_color[2]/255
 
         for col in range(2*self.cols+1):
-            self.grid_state[-1][col][0] = fourthBall[0]/255
-            self.grid_state[-1][col][1] = fourthBall[1]/255
-            self.grid_state[-1][col][2] = fourthBall[2]/255
-            self.grid_state[-2][col][0] = thirdBall[0]/255
-            self.grid_state[-2][col][1] = thirdBall[1]/255
-            self.grid_state[-2][col][2] = thirdBall[2]/255
-            self.grid_state[-3][col][0] = nextBall[0]/255
-            self.grid_state[-3][col][1] = nextBall[1]/255
-            self.grid_state[-3][col][2] = nextBall[2]/255
-            self.grid_state[-4][col][0] = currBall[0]/255
-            self.grid_state[-4][col][1] = currBall[1]/255
-            self.grid_state[-4][col][2] = currBall[2]/255
+            #self.grid_state[-1][col][0] = fourthBall[0]/255
+            #self.grid_state[-1][col][1] = fourthBall[1]/255
+            #self.grid_state[-1][col][2] = fourthBall[2]/255
+            #self.grid_state[-2][col][0] = thirdBall[0]/255
+            #self.grid_state[-2][col][1] = thirdBall[1]/255
+            #self.grid_state[-2][col][2] = thirdBall[2]/255
+            self.grid_state[-1][col][0] = nextBall[0]/255
+            self.grid_state[-1][col][1] = nextBall[1]/255
+            self.grid_state[-1][col][2] = nextBall[2]/255
+            self.grid_state[-2][col][0] = currBall[0]/255
+            self.grid_state[-2][col][1] = currBall[1]/255
+            self.grid_state[-2][col][2] = currBall[2]/255
 
     # Return nextState and reward for current action
     def gameInfo(self, game, reward_params):
