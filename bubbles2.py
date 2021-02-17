@@ -13,7 +13,7 @@ from collections import deque
 import pickle
 import objs.q_learning
 
-angle_resolution = 7.5
+angle_resolution = 3.75
 
 def reset_game(reward_paras, initial_grid):
     # Create background
