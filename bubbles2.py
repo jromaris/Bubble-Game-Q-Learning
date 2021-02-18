@@ -13,7 +13,7 @@ from collections import deque
 import pickle
 import objs.q_learning
 
-angle_resolution = 3.75
+angle_resolution = 7.5
 
 def reset_game(reward_paras, initial_grid):
     # Create background
@@ -206,7 +206,7 @@ def train(saved_mod, epsilon_paras, reward_paras, num_episodes=1000, batch_size=
 
 
 def test(reward_paras):
-    main_nn = tf.keras.models.load_model('model800', compile=False)
+    main_nn = tf.keras.models.load_model('model7500', compile=False)
     limit_a, limit_b = 15, 165
     angle_step = angle_resolution
     angles = [i * angle_step for i in range(int(limit_a / angle_step), int(limit_b / angle_step))]
@@ -214,6 +214,10 @@ def test(reward_paras):
     game, background, grid_manager, gun = reset_game(reward_paras, initial_grid=None)
 
     ep_reward, done = 0, False
+
+    win = False
+    acs = 0
+    score = 0
     while not done:  # or won game
         handle_game_events()
 
@@ -229,7 +233,6 @@ def test(reward_paras):
             state_in = tf.expand_dims(state, axis=0)
             action = do_trained_action(main_nn, state_in)
             # print('\tAction: ', action)
-
             gun.rotate(angles[action])  # Rotate the gun if the mouse is moved
             gun.fire()
 
@@ -239,9 +242,13 @@ def test(reward_paras):
 
         pg.display.update()
 
-        clock.tick(20)  # 60 FPS
-
+        clock.tick(60)  # 60 FPS
+        acs += 1
+        score =game.score
+        if game.won:
+            win = True
         done = game.over or game.won
+    return acs, score, win
 
 def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
          activation='tanh', mod_n=0, saved_model=None):
@@ -252,12 +259,28 @@ def main(epsilon_pars, reward_pars, num_episodes=1000, batch_size=32, discount=0
               amount_frames=amount_frames, activation=activation, model_n=mod_n)
         return train_rewards
     else:
-        test(reward_pars)
+        test_num =100
+        ganado = 0
+        test_data = np.zeros((test_num,3))
+        for i in range(test_num):
+            print(ganado)
+            print("Vas por Partida Nº"+str(i))
+            acs, scor, win = test(reward_pars)
+            test_data[i][0]= acs
+            if win:
+                ganado+= 1
+            test_data[i][2]= scor
+        plt.hist(test_data[...,0], bins = 10)
+        plt.show()
+        plt.hist(test_data[...,1], bins = 10)
+        plt.show()
+        print("GANASTE "+str(ganado))
 
-#if __name__ == '__main__':
-#     reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
-#     epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
-     # saved_model = tf.keras.models.load_model('models/model30', compile=False)
-#     saved_model = None
-#     main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
-#          activation='relu', mod_n=0)
+
+if __name__ == '__main__':
+    reward_params = {'game over': -200, 'no hit': -2, 'hit': 1, 'balls_down_positive': True, 'game won': 100}
+    epsilon_params = {'constant': (False, 0.7), 'a': 0, 'k': 0.75, 'b': 1.5, 'q': 0.5, 'v': 0.55, 'm': 0, 'c': 1}
+    # saved_model = tf.keras.models.load_model('models/model30', compile=False)
+    saved_model = None
+    main(epsilon_params, reward_params, num_episodes=1000, batch_size=32, discount=0.92, amount_frames=2000,
+        activation='relu', mod_n=0)
