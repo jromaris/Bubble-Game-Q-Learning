@@ -273,9 +273,9 @@ def test(reward_paras):
 
         game.drawScore()  # draw score
 
-        #pg.display.update()
+        pg.display.update()
 
-        #clock.tick(20000)  # 60 FPS
+        clock.tick(60)  # 60 FPS
         acs+= 1
         points = game.score
         done = game.over or game.won
